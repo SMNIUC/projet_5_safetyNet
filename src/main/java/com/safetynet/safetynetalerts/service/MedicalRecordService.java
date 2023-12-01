@@ -5,6 +5,7 @@ import com.safetynet.safetynetalerts.utils.JsonReaderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -13,7 +14,55 @@ public class MedicalRecordService {
 
     private final JsonReaderUtil jsonReaderUtil;
 
+    //TEST - list all MedicalRecord content
     public List<MedicalRecord> getAllMedicalRecords() {
         return jsonReaderUtil.getMedicalRecordsList();
+    }
+
+    //Add a new medical record
+    public MedicalRecord addNewMedicalRecord(MedicalRecord newMedicalRecord) {
+
+        List<MedicalRecord> medicalRecordList = jsonReaderUtil.getMedicalRecordsList();
+        medicalRecordList.add(newMedicalRecord);
+
+        return newMedicalRecord;
+    }
+
+    //Update a medical record
+    public MedicalRecord updateMedicalRecord(String firstName, String lastName, MedicalRecord medicalRecord) {
+
+        MedicalRecord medicalRecordToUpdate = jsonReaderUtil.getMedicalRecordByName(firstName, lastName);
+
+        if(medicalRecordToUpdate.getFirstName() != null && medicalRecordToUpdate.getLastName() != null) {
+
+            LocalDate birthdate = medicalRecord.getBirthdate();
+            if(birthdate != null) {
+                medicalRecordToUpdate.setBirthdate(birthdate);
+            }
+
+            List<String> medications = medicalRecord.getMedications();
+            if(medications != null) {
+                medicalRecordToUpdate.setMedications(medications);
+            }
+
+            List<String> allergies = medicalRecord.getAllergies();
+            if(allergies != null) {
+                medicalRecordToUpdate.setAllergies(allergies);
+            }
+
+            return medicalRecordToUpdate;
+
+        } else {
+            return null;
+        }
+    }
+
+    //Delete a person
+    public void deleteMedicalRecord(String firstName, String lastName) {
+
+        List<MedicalRecord> medicalRecordList = jsonReaderUtil.getMedicalRecordsList();
+        MedicalRecord medicalRecordToDelete = jsonReaderUtil.getMedicalRecordByName(firstName, lastName);
+
+        medicalRecordList.remove(medicalRecordToDelete);
     }
 }

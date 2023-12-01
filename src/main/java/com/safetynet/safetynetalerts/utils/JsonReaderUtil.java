@@ -123,7 +123,7 @@ public class JsonReaderUtil {
 
     public Person getPersonByName(String firstName, String lastName) {
 
-        Person queriedPerson = new Person();
+        Person queriedPerson = null;
 
         for(Person person : personList) {
             if(person.getFirstName().equals(firstName) && (person.getLastName().equals(lastName))) {
@@ -136,7 +136,7 @@ public class JsonReaderUtil {
 
     public Firestation getFirestationByAddress(String address) {
 
-        Firestation queriedStation = new Firestation();
+        Firestation queriedStation = null;
 
         for(Firestation firestation : firestationList) {
             if(firestation.getAddress().equals(address)) {
@@ -149,7 +149,7 @@ public class JsonReaderUtil {
 
     public Firestation getFirestationByStation(String station) {
 
-        Firestation queriedStation = new Firestation();
+        Firestation queriedStation = null;
 
         for(Firestation firestation : firestationList) {
             if(firestation.getStation().equals(station)) {
@@ -158,5 +158,18 @@ public class JsonReaderUtil {
             }
         }
         return queriedStation;
+    }
+
+    public MedicalRecord getMedicalRecordByName(String firstName, String lastName) {
+
+        MedicalRecord queriedRecord = null;
+
+        for(MedicalRecord medicalRecord : medicalRecordsList) {
+            if(medicalRecord.getFirstName().equals(firstName) && (medicalRecord.getLastName().equals(lastName))) {
+                queriedRecord = medicalRecord;
+
+            }
+        }
+        return queriedRecord;
     }
 }

@@ -12,12 +12,10 @@ import java.util.List;
 @Component
 public class MedicalRecord {
 
-    private List<String> allergies = new ArrayList<>();
-
     private String firstName;
     private String lastName;
     private LocalDate birthdate;
-
+    private List<String> allergies = new ArrayList<>();
     private List<String> medications = new ArrayList<>();
 
 }
