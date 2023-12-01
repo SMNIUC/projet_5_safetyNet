@@ -26,10 +26,10 @@ public class PersonController {
     }
 
     //UPDATE - update person's details
-//    @PutMapping("/person")
-//    public Person updatePersonInfo(@RequestParam String firstName, @RequestParam String lastName, @RequestBody Person person) {
-//        return personService.updatePersonInfo(firstName, lastName, person);
-//    }
+    @PutMapping("/person")
+    public Person updatePersonInfo(@RequestParam String firstName, @RequestParam String lastName, @RequestBody Person person) {
+        return personService.updatePersonInfo(firstName, lastName, person);
+    }
 
     //DELETE - delete a person from personList
     @DeleteMapping("/person")
