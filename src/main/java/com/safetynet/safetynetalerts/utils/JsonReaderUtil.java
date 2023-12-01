@@ -8,7 +8,6 @@ import com.safetynet.safetynetalerts.model.Person;
 import lombok.Data;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -17,9 +16,7 @@ import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -122,5 +119,18 @@ public class JsonReaderUtil {
 
             medicalRecordsList.add(medicalRecord);
         }
+    }
+
+    public Person getPersonByName(String firstName, String lastName) {
+
+        Person queriedPerson = new Person();
+
+        for(Person person : personList) {
+            if(person.getFirstName().equals(firstName) && (person.getLastName().equals(lastName))) {
+                    queriedPerson = person;
+
+            }
+        }
+        return queriedPerson;
     }
 }

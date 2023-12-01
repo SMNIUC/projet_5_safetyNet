@@ -37,6 +37,15 @@ public class PersonService {
         return person;
     }
 
+    public void deletePerson(String firstName, String lastName) {
+
+        List<Person> personList = jsonReaderUtil.getPersonList();
+
+        Person personToDelete = jsonReaderUtil.getPersonByName(firstName, lastName);
+
+        personList.remove(personToDelete);
+    }
+
     //Update a person's details
 //    public void updatePersonDetails(Person person) {
 //
