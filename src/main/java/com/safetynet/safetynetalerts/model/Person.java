@@ -1,19 +1,22 @@
 package com.safetynet.safetynetalerts.model;
 
 import lombok.Data;
+import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
+@Component
 public class Person {
 
     private String firstName;
     private String lastName;
+    private String address;
     private String city;
-    private int zip;
-    private String phoneNumber;
+    private String zip;
+    private String phone;
     private String email;
-    private Date birthday;
+    private LocalDate birthday;
 
 }
 

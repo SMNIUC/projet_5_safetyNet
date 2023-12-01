@@ -1,10 +1,13 @@
 package com.safetynet.safetynetalerts.model;
 
 import lombok.Data;
+import org.springframework.stereotype.Component;
 
 @Data
+@Component
 public class Firestation {
 
-    private int stationNumber;
+    private String address;
+    private String station;
 
 }

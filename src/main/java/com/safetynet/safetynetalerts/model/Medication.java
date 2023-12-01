@@ -1,9 +1,11 @@
 package com.safetynet.safetynetalerts.model;
 
 import lombok.Data;
+import org.springframework.stereotype.Component;
 
 @Data
-public class Medicine {
+@Component
+public class Medication {
 
     private String medicineName;
     private String dosage;
