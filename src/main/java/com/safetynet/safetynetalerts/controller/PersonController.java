@@ -13,7 +13,7 @@ public class PersonController {
 
     private final PersonService personService;
 
-    //Test - list all Person content
+    //TEST - List all Person content
     @GetMapping("/persons/all")
     public List<Person> getAllPersons() {
         return personService.getAllPersons();
@@ -26,6 +26,10 @@ public class PersonController {
     }
 
     //UPDATE - update person's details
+//    @PutMapping("/person")
+//    public Person updatePersonInfo(@RequestParam String firstName, @RequestParam String lastName, @RequestBody Person person) {
+//        return personService.updatePersonInfo(firstName, lastName, person);
+//    }
 
     //DELETE - delete a person from personList
     @DeleteMapping("/person")

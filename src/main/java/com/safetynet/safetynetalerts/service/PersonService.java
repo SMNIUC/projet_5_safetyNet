@@ -23,20 +23,23 @@ public class PersonService {
 
         List<Person> personList = jsonReaderUtil.getPersonList();
 
-        Person person = new Person();
+        personList.add(newPerson);
 
-        person.setFirstName(newPerson.getFirstName());
-        person.setLastName(newPerson.getLastName());
-        person.setAddress(newPerson.getAddress());
-        person.setCity(newPerson.getCity());
-        person.setZip(newPerson.getZip());
-        person.setPhone(newPerson.getPhone());
-        person.setEmail(newPerson.getEmail());
-
-        personList.add(person);
-        return person;
+        return newPerson;
     }
 
+//    //Update a person's details
+//    public Person updatePersonInfo(String firstName, String lastName, Person person) {
+//
+//        List<Person> personList = jsonReaderUtil.getPersonList();
+//
+//        Person personToUpdate = jsonReaderUtil.getPersonByName(firstName, lastName);
+//
+//
+//
+//    }
+
+    //Delete a person
     public void deletePerson(String firstName, String lastName) {
 
         List<Person> personList = jsonReaderUtil.getPersonList();
@@ -46,18 +49,5 @@ public class PersonService {
         personList.remove(personToDelete);
     }
 
-    //Update a person's details
-//    public void updatePersonDetails(Person person) {
-//
-//        List<Person> personList = jsonReaderUtil.getPersonList();
-//
-//        if()
-//
-//    }
-
-    //Delete a person
-//    public String deletePerson(String firstName, String lastName) {
-//        jsonReaderUtil.getPersonList()
-//    }
 
 }
