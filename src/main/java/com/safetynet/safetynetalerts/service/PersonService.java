@@ -1,10 +1,13 @@
 package com.safetynet.safetynetalerts.service;
 
+import com.safetynet.safetynetalerts.controller.PersonPerFirestationDTO;
+import com.safetynet.safetynetalerts.model.Firestation;
 import com.safetynet.safetynetalerts.model.Person;
 import com.safetynet.safetynetalerts.utils.JsonReaderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -73,5 +76,29 @@ public class PersonService {
         Person personToDelete = jsonReaderUtil.getPersonByName(firstName, lastName);
 
         personList.remove(personToDelete);
+    }
+
+    //Returns list of persons covered by a certain firestation
+    public List<Person> getPersonPerFirestation(String station) {
+
+        List<Person> personList = jsonReaderUtil.getPersonList();
+        List<Firestation> firestationList = jsonReaderUtil.getFirestationList();
+
+        List<PersonPerFirestationDTO> personPerFireStationList = new ArrayList<>();
+
+        for(Firestation firestation : firestationList) {
+            if(firestation.getStation().equals(station)) {
+                String address = firestation.getAddress();
+                for (Person person : personList) {
+                    if (person.getAddress().equals(address)) {
+
+                        personPerFireStationList.add(person);
+
+                    }
+                }
+            }
+        }
+
+        return personPerFireStationList;
     }
 }
