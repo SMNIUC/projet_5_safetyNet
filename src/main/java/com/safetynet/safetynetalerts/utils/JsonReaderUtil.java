@@ -133,4 +133,30 @@ public class JsonReaderUtil {
         }
         return queriedPerson;
     }
+
+    public Firestation getFirestationByAddress(String address) {
+
+        Firestation queriedStation = new Firestation();
+
+        for(Firestation firestation : firestationList) {
+            if(firestation.getAddress().equals(address)) {
+                queriedStation = firestation;
+
+            }
+        }
+        return queriedStation;
+    }
+
+    public Firestation getFirestationByStation(String station) {
+
+        Firestation queriedStation = new Firestation();
+
+        for(Firestation firestation : firestationList) {
+            if(firestation.getStation().equals(station)) {
+                queriedStation = firestation;
+
+            }
+        }
+        return queriedStation;
+    }
 }
