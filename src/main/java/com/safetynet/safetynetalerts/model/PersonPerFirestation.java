@@ -1,6 +1,11 @@
-package com.safetynet.safetynetalerts.controller;
+package com.safetynet.safetynetalerts.model;
 
-public class PersonPerFirestationDTO {
+import lombok.Data;
+import org.springframework.stereotype.Component;
+
+@Data
+@Component
+public class PersonPerFirestation {
 
     private String firstName;
     private String lastName;

@@ -14,7 +14,6 @@ import java.util.List;
 public class FirestationController {
 
     private final FirestationService firestationService;
-    private final PersonService personService;
 
     //TEST - List all Firestation content
     @GetMapping("/firestations/all")
@@ -38,11 +37,5 @@ public class FirestationController {
     @DeleteMapping("/firestation")
     public void deleteFirestation(@RequestParam String address, @RequestParam String station) {
         firestationService.deleteFirestation(address, station);
-    }
-
-    //GET - returns list of persons covered by a certain firestation
-    @GetMapping("/firestation")
-    public List<Person> getPersonPerFirestation(@RequestParam String station) {
-        return personService.getPersonPerFirestation(station);
     }
 }

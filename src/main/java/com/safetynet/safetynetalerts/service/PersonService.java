@@ -1,12 +1,12 @@
 package com.safetynet.safetynetalerts.service;
 
-import com.safetynet.safetynetalerts.controller.PersonPerFirestationDTO;
-import com.safetynet.safetynetalerts.model.Firestation;
-import com.safetynet.safetynetalerts.model.Person;
+import com.safetynet.safetynetalerts.model.*;
 import com.safetynet.safetynetalerts.utils.JsonReaderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +15,7 @@ import java.util.List;
 public class PersonService {
 
     private final JsonReaderUtil jsonReaderUtil;
+    private final LocalDate today = LocalDate.now();
 
     //TEST - list all Person content
     public List<Person> getAllPersons() {
@@ -78,13 +79,17 @@ public class PersonService {
         personList.remove(personToDelete);
     }
 
-    //Returns list of persons covered by a certain firestation
-    public List<Person> getPersonPerFirestation(String station) {
+    //Returns list of counted children and adults covered by a certain firestation
+    public List<PersonPerFirestation> getPersonPerFirestation(String station) {
 
         List<Person> personList = jsonReaderUtil.getPersonList();
         List<Firestation> firestationList = jsonReaderUtil.getFirestationList();
+        List<MedicalRecord> medicalRecordList = jsonReaderUtil.getMedicalRecordsList();
 
-        List<PersonPerFirestationDTO> personPerFireStationList = new ArrayList<>();
+        List<PersonPerFirestation> personPerFireStationList = new ArrayList<>();
+
+        int adults = 0;
+        int children = 0;
 
         for(Firestation firestation : firestationList) {
             if(firestation.getStation().equals(station)) {
@@ -92,13 +97,81 @@ public class PersonService {
                 for (Person person : personList) {
                     if (person.getAddress().equals(address)) {
 
-                        personPerFireStationList.add(person);
+                        PersonPerFirestation personPerFireStation = new PersonPerFirestation();
 
+                        personPerFireStation.setFirstName(person.getFirstName());
+                        personPerFireStation.setLastName(person.getLastName());
+                        personPerFireStation.setAddress(person.getAddress());
+                        personPerFireStation.setCity(person.getCity());
+                        personPerFireStation.setZip(person.getZip());
+                        personPerFireStation.setPhone(person.getPhone());
+
+                        for(MedicalRecord medicalRecord : medicalRecordList) {
+                            if (medicalRecord.getFirstName().equals(person.getFirstName()) && medicalRecord.getLastName().equals(person.getLastName())) {
+
+                                if (medicalRecord.getBirthdate().isBefore(today.minusYears(18))) {
+                                    adults++;
+                                } else {
+                                    children++;
+                                }
+                            }
+                        }
+                        personPerFireStation.setNumberOfChildren(children);
+                        personPerFireStation.setNumberOfAdults(adults);
+
+                        personPerFireStationList.add(personPerFireStation);
                     }
                 }
             }
         }
-
         return personPerFireStationList;
+    }
+
+    public List<ChildrenPerHousehold> getChildrenPerHousehold(String address) {
+
+        List<Person> personList = jsonReaderUtil.getPersonList();
+        List<MedicalRecord> medicalRecordList = jsonReaderUtil.getMedicalRecordsList();
+
+        List<ChildrenPerHousehold> childrenPerHouseholdList = new ArrayList<>();
+
+        for(Person person : personList) {
+            if(person.getAddress().equals(address)) {
+                for(MedicalRecord medicalRecord : medicalRecordList) {
+                    if(medicalRecord.getFirstName().equals(person.getFirstName()) && medicalRecord.getLastName().equals(person.getLastName()) && medicalRecord.getBirthdate().isAfter(today.minusYears(18))) {
+
+                        ChildrenPerHousehold childrenPerHousehold = new ChildrenPerHousehold();
+                        List<Person> householdMemberList = new ArrayList<>();
+
+                        childrenPerHousehold.setFirstName(medicalRecord.getFirstName());
+                        childrenPerHousehold.setLastName(medicalRecord.getLastName());
+                        childrenPerHousehold.setAge(Period.between(medicalRecord.getBirthdate(), today).getYears());
+
+                        for(Person otherPerson : personList) {
+                            if(otherPerson.getAddress().equals(address) && otherPerson.getFirstName().equals(childrenPerHousehold.getFirstName()) && otherPerson.getLastName().equals(childrenPerHousehold.getLastName())) {
+                                householdMemberList.add(otherPerson);
+                            }
+                        }
+
+                        childrenPerHousehold.setHouseholdMembers(householdMemberList);
+
+                        childrenPerHouseholdList.add(childrenPerHousehold);
+                    }
+                }
+            }
+        }
+        return childrenPerHouseholdList;
+    }
+
+    public List<Person> getHouseholdMembers(String address, String firstName, String lastName) {
+
+        List<Person> personList = jsonReaderUtil.getPersonList();
+        List<Person> householdMembersList = new ArrayList<>();
+
+        for(Person person : personList) {
+            if(person.getAddress().equals(address) && !person.getFirstName().equals(firstName) && !person.getLastName().equals(lastName)) {
+                householdMembersList.add(person);
+            }
+        }
+        return householdMembersList;
     }
 }
