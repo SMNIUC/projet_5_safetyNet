@@ -222,4 +222,52 @@ public class PersonService {
         }
         return fireAlertList;
     }
+
+    public List<PersonInfo> getPersonInfo(String firstName, String lastName) {
+
+        List<Person> personList = jsonReaderUtil.getPersonList();
+        List<MedicalRecord> medicalRecordList = jsonReaderUtil.getMedicalRecordsList();
+
+        List<PersonInfo> personInfoList = new ArrayList<>();
+
+        for(Person person : personList) {
+            if(person.getFirstName().equals(firstName) && person.getLastName().equals(lastName)) {
+
+                PersonInfo personInfo = new PersonInfo();
+
+                personInfo.setFirstName(person.getFirstName());
+                personInfo.setLastName(person.getLastName());
+                personInfo.setAddress(person.getAddress());
+                personInfo.setEmail(person.getEmail());
+
+                for(MedicalRecord medicalRecord : medicalRecordList) {
+                    if(person.getFirstName().equals(medicalRecord.getFirstName()) && person.getLastName().equals(medicalRecord.getLastName())) {
+
+                        personInfo.setAge(Period.between(medicalRecord.getBirthdate(), today).getYears());
+                        personInfo.setMedication(medicalRecord.getMedications());
+                        personInfo.setAllergies(medicalRecord.getAllergies());
+                    }
+                }
+
+                personInfoList.add(personInfo);
+            }
+        }
+        return personInfoList;
+    }
+
+    public List<String> getEmails(String city) {
+
+        List<Person> personList = jsonReaderUtil.getPersonList();
+
+        List<String> emailList = new ArrayList<>();
+
+        for(Person person : personList) {
+            if(person.getCity().equals(city)) {
+                emailList.add(person.getEmail());
+            }
+        }
+        return emailList;
+    }
+
+
 }
