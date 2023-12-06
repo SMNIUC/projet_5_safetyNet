@@ -130,6 +130,7 @@ public class PersonService {
     public List<ChildrenPerHousehold> getChildrenPerHousehold(String address) {
 
         List<Person> personList = jsonReaderUtil.getPersonList();
+        List<Person> householdMembers = jsonReaderUtil.getPersonList();
         List<MedicalRecord> medicalRecordList = jsonReaderUtil.getMedicalRecordsList();
 
         List<ChildrenPerHousehold> childrenPerHouseholdList = new ArrayList<>();
@@ -140,15 +141,16 @@ public class PersonService {
                     if(medicalRecord.getFirstName().equals(person.getFirstName()) && medicalRecord.getLastName().equals(person.getLastName()) && medicalRecord.getBirthdate().isAfter(today.minusYears(18))) {
 
                         ChildrenPerHousehold childrenPerHousehold = new ChildrenPerHousehold();
-                        List<Person> householdMemberList = new ArrayList<>();
 
                         childrenPerHousehold.setFirstName(medicalRecord.getFirstName());
                         childrenPerHousehold.setLastName(medicalRecord.getLastName());
                         childrenPerHousehold.setAge(Period.between(medicalRecord.getBirthdate(), today).getYears());
 
-                        for(Person otherPerson : personList) {
-                            if(otherPerson.getAddress().equals(address) && otherPerson.getFirstName().equals(childrenPerHousehold.getFirstName()) && otherPerson.getLastName().equals(childrenPerHousehold.getLastName())) {
-                                householdMemberList.add(otherPerson);
+                        List<Person> householdMemberList = new ArrayList<>();
+
+                        for(Person householdMember : householdMembers){
+                            if(householdMember.getAddress().equals(address) && !householdMember.getFirstName().equals(childrenPerHousehold.getFirstName())) {
+                                householdMemberList.add(householdMember);
                             }
                         }
 
@@ -174,4 +176,5 @@ public class PersonService {
         }
         return householdMembersList;
     }
+
 }
