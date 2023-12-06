@@ -184,4 +184,42 @@ public class PersonService {
         }
         return phoneNumbersPerFirestationList;
     }
+
+    public List<FireAlert> getFireAlert(String address) {
+
+        List<Person> personList = jsonReaderUtil.getPersonList();
+        List<Firestation> firestationList = jsonReaderUtil.getFirestationList();
+        List<MedicalRecord> medicalRecordList = jsonReaderUtil.getMedicalRecordsList();
+
+        List<FireAlert> fireAlertList = new ArrayList<>();
+
+        for(Person person : personList) {
+            if(person.getAddress().equals(address)) {
+
+                FireAlert fireAlert = new FireAlert();
+
+                fireAlert.setFirstName(person.getFirstName());
+                fireAlert.setLastName(person.getLastName());
+                fireAlert.setPhoneNumber(person.getPhone());
+
+                for(MedicalRecord medicalRecord : medicalRecordList) {
+                    if(person.getFirstName().equals(medicalRecord.getFirstName()) && person.getLastName().equals(medicalRecord.getLastName())) {
+
+                        fireAlert.setAge(Period.between(medicalRecord.getBirthdate(), today).getYears());
+                        fireAlert.setMedicines(medicalRecord.getMedications());
+                        fireAlert.setAllergies(medicalRecord.getAllergies());
+                    }
+                }
+
+                for(Firestation firestation : firestationList) {
+                    if(firestation.getAddress().equals(address)) {
+                        fireAlert.setFirestation(firestation.getStation());
+                    }
+                }
+
+                fireAlertList.add(fireAlert);
+            }
+        }
+        return fireAlertList;
+    }
 }

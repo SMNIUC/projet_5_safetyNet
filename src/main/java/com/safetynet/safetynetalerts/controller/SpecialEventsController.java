@@ -1,6 +1,7 @@
 package com.safetynet.safetynetalerts.controller;
 
 import com.safetynet.safetynetalerts.model.ChildrenPerHousehold;
+import com.safetynet.safetynetalerts.model.FireAlert;
 import com.safetynet.safetynetalerts.model.PersonPerFirestation;
 import com.safetynet.safetynetalerts.service.FirestationService;
 import com.safetynet.safetynetalerts.service.MedicalRecordService;
@@ -36,5 +37,11 @@ public class SpecialEventsController {
     @GetMapping("/phoneAlert")
     public List<String> getPhoneNumbersPerFirestation(@RequestParam String station) {
         return personService.getPhoneNumbersPerFirestation(station);
+    }
+
+    //GET - returns a list of inhabitants at a specific address and the associated firestation
+    @GetMapping("/fire")
+    public List<FireAlert> getFireAlert(@RequestParam String address) {
+        return personService.getFireAlert(address);
     }
 }
