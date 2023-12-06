@@ -164,17 +164,24 @@ public class PersonService {
         return childrenPerHouseholdList;
     }
 
-    public List<Person> getHouseholdMembers(String address, String firstName, String lastName) {
+    public List<String> getPhoneNumbersPerFirestation(String station) {
 
         List<Person> personList = jsonReaderUtil.getPersonList();
-        List<Person> householdMembersList = new ArrayList<>();
+        List<Firestation> firestationList = jsonReaderUtil.getFirestationList();
 
-        for(Person person : personList) {
-            if(person.getAddress().equals(address) && !person.getFirstName().equals(firstName) && !person.getLastName().equals(lastName)) {
-                householdMembersList.add(person);
+        List<String> phoneNumbersPerFirestationList = new ArrayList<>();
+
+        for(Firestation firestation : firestationList) {
+            if(firestation.getStation().equals(station)) {
+                for(Person person : personList) {
+                    if (person.getAddress().equals(firestation.getAddress())) {
+
+                        phoneNumbersPerFirestationList.add(person.getPhone());
+
+                    }
+                }
             }
         }
-        return householdMembersList;
+        return phoneNumbersPerFirestationList;
     }
-
 }

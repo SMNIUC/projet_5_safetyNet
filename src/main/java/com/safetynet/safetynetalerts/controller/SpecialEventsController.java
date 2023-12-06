@@ -31,4 +31,10 @@ public class SpecialEventsController {
     public List<ChildrenPerHousehold> getChildrenPerHousehold(@RequestParam String address) {
         return personService.getChildrenPerHousehold(address);
     }
+
+    //GET - returns a list of phone numbers per firestation
+    @GetMapping("/phoneAlert")
+    public List<String> getPhoneNumbersPerFirestation(@RequestParam String station) {
+        return personService.getPhoneNumbersPerFirestation(station);
+    }
 }
