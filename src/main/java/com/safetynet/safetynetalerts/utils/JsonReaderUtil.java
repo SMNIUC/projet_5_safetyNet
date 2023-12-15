@@ -117,6 +117,10 @@ public class JsonReaderUtil {
             medicalRecord.setMedications(medicationList);
             medicalRecord.setAllergies(allergyList);
 
+            Person person = this.getPersonByName(firstName, lastName);
+
+            person.setMedicalRecord(medicalRecord);
+
             medicalRecordsList.add(medicalRecord);
         }
     }
@@ -171,5 +175,17 @@ public class JsonReaderUtil {
             }
         }
         return queriedRecord;
+    }
+
+    public Firestation getFirestationByName(Person person) {
+
+        Firestation queriedStation = null;
+
+        for(Firestation firestation : firestationList) {
+            if(firestation.getAddress().equals(person.getAddress())) {
+                queriedStation = firestation;
+            }
+        }
+        return queriedStation;
     }
 }

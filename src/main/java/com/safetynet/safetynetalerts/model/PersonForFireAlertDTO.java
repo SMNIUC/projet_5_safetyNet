@@ -7,14 +7,14 @@ import java.util.List;
 
 @Data
 @Component
-public class PersonInfo {
+public class PersonForFireAlertDTO {
 
     private String firstName;
     private String lastName;
-    private String address;
+    private String phoneNumber;
     private int age;
-    private String email;
-    private List<String> medication;
+    private List<String> medicines;
     private List<String> allergies;
+    private String firestation;
 
 }

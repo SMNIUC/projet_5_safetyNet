@@ -1,5 +1,6 @@
 package com.safetynet.safetynetalerts.service;
 
+import com.safetynet.safetynetalerts.model.PersonPerFirestationDTO;
 import com.safetynet.safetynetalerts.model.*;
 import com.safetynet.safetynetalerts.utils.JsonReaderUtil;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +15,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PersonService {
 
-    private final JsonReaderUtil jsonReaderUtil;
-    private final LocalDate today = LocalDate.now();
+    private static final JsonReaderUtil jsonReaderUtil = new JsonReaderUtil();
+    private static final List<Person> personList = jsonReaderUtil.getPersonList();
+    private static final List<Firestation> firestationList = jsonReaderUtil.getFirestationList();
 
     //TEST - list all Person content
     public List<Person> getAllPersons() {
@@ -25,7 +27,6 @@ public class PersonService {
     //Add a new person
     public Person addNewPerson(Person newPerson) {
 
-        List<Person> personList = jsonReaderUtil.getPersonList();
         personList.add(newPerson);
 
         return newPerson;
@@ -73,20 +74,15 @@ public class PersonService {
     //Delete a person
     public void deletePerson(String firstName, String lastName) {
 
-        List<Person> personList = jsonReaderUtil.getPersonList();
         Person personToDelete = jsonReaderUtil.getPersonByName(firstName, lastName);
 
         personList.remove(personToDelete);
     }
 
     //Returns list of counted children and adults covered by a certain firestation
-    public List<PersonPerFirestation> getPersonPerFirestation(String station) {
+    public List<PersonPerFirestationDTO> getPersonPerFirestation(String station) {
 
-        List<Person> personList = jsonReaderUtil.getPersonList();
-        List<Firestation> firestationList = jsonReaderUtil.getFirestationList();
-        List<MedicalRecord> medicalRecordList = jsonReaderUtil.getMedicalRecordsList();
-
-        List<PersonPerFirestation> personPerFireStationList = new ArrayList<>();
+        List<PersonPerFirestationDTO> personPerFireStationListDTO = new ArrayList<>();
 
         int adults = 0;
         int children = 0;
@@ -97,77 +93,71 @@ public class PersonService {
                 for (Person person : personList) {
                     if (person.getAddress().equals(address)) {
 
-                        PersonPerFirestation personPerFireStation = new PersonPerFirestation();
+                        PersonPerFirestationDTO personPerFireStationDTO = new PersonPerFirestationDTO();
 
-                        personPerFireStation.setFirstName(person.getFirstName());
-                        personPerFireStation.setLastName(person.getLastName());
-                        personPerFireStation.setAddress(person.getAddress());
-                        personPerFireStation.setCity(person.getCity());
-                        personPerFireStation.setZip(person.getZip());
-                        personPerFireStation.setPhone(person.getPhone());
-
-                        for(MedicalRecord medicalRecord : medicalRecordList) {
-                            if (medicalRecord.getFirstName().equals(person.getFirstName()) && medicalRecord.getLastName().equals(person.getLastName())) {
-
-                                if (medicalRecord.getBirthdate().isBefore(today.minusYears(18))) {
-                                    adults++;
-                                } else {
-                                    children++;
-                                }
-                            }
+                        personPerFireStationDTO.setFirstName(person.getFirstName());
+                        personPerFireStationDTO.setLastName(person.getLastName());
+                        personPerFireStationDTO.setAddress(person.getAddress());
+                        personPerFireStationDTO.setCity(person.getCity());
+                        personPerFireStationDTO.setZip(person.getZip());
+                        personPerFireStationDTO.setPhone(person.getPhone());
+                        if(person.isChild()) {
+                            children++;
+                        } else {
+                            adults++;
                         }
-                        personPerFireStation.setNumberOfChildren(children);
-                        personPerFireStation.setNumberOfAdults(adults);
 
-                        personPerFireStationList.add(personPerFireStation);
+                        personPerFireStationDTO.setNumberOfChildren(children);
+                        personPerFireStationDTO.setNumberOfAdults(adults);
+
+                        personPerFireStationListDTO.add(personPerFireStationDTO);
                     }
                 }
             }
         }
-        return personPerFireStationList;
+        return personPerFireStationListDTO;
     }
 
     public List<ChildrenPerHousehold> getChildrenPerHousehold(String address) {
 
-        List<Person> personList = jsonReaderUtil.getPersonList();
+        LocalDate today = LocalDate.now();
         List<Person> householdMembers = jsonReaderUtil.getPersonList();
-        List<MedicalRecord> medicalRecordList = jsonReaderUtil.getMedicalRecordsList();
 
         List<ChildrenPerHousehold> childrenPerHouseholdList = new ArrayList<>();
 
         for(Person person : personList) {
-            if(person.getAddress().equals(address)) {
-                for(MedicalRecord medicalRecord : medicalRecordList) {
-                    if(medicalRecord.getFirstName().equals(person.getFirstName()) && medicalRecord.getLastName().equals(person.getLastName()) && medicalRecord.getBirthdate().isAfter(today.minusYears(18))) {
+            if(person.getAddress().equals(address) && (person.isChild())) {
 
-                        ChildrenPerHousehold childrenPerHousehold = new ChildrenPerHousehold();
+                ChildrenPerHousehold childrenPerHousehold = new ChildrenPerHousehold();
 
-                        childrenPerHousehold.setFirstName(medicalRecord.getFirstName());
-                        childrenPerHousehold.setLastName(medicalRecord.getLastName());
-                        childrenPerHousehold.setAge(Period.between(medicalRecord.getBirthdate(), today).getYears());
+                childrenPerHousehold.setFirstName(person.getFirstName());
+                childrenPerHousehold.setLastName(person.getLastName());
+                childrenPerHousehold.setAge(Period.between(person.getMedicalRecord().getBirthdate(), today).getYears());
 
-                        List<Person> householdMemberList = new ArrayList<>();
+                List<ChildHouseholdMemberDTO> childHouseholdMemberDTOList = getChildHouseholdMemberDTOS(address, householdMembers, childrenPerHousehold);
+                childrenPerHousehold.setHouseholdMembers(childHouseholdMemberDTOList);
 
-                        for(Person householdMember : householdMembers){
-                            if(householdMember.getAddress().equals(address) && !householdMember.getFirstName().equals(childrenPerHousehold.getFirstName())) {
-                                householdMemberList.add(householdMember);
-                            }
-                        }
-
-                        childrenPerHousehold.setHouseholdMembers(householdMemberList);
-
-                        childrenPerHouseholdList.add(childrenPerHousehold);
-                    }
-                }
+                childrenPerHouseholdList.add(childrenPerHousehold);
             }
         }
         return childrenPerHouseholdList;
     }
 
-    public List<String> getPhoneNumbersPerFirestation(String station) {
+    private static List<ChildHouseholdMemberDTO> getChildHouseholdMemberDTOS(String address, List<Person> householdMembers, ChildrenPerHousehold childrenPerHousehold) {
+        List<ChildHouseholdMemberDTO> childHouseholdMemberDTOList = new ArrayList<>();
 
-        List<Person> personList = jsonReaderUtil.getPersonList();
-        List<Firestation> firestationList = jsonReaderUtil.getFirestationList();
+        for(Person householdMember : householdMembers){
+            if(householdMember.getAddress().equals(address) && !householdMember.getFirstName().equals(childrenPerHousehold.getFirstName())) {
+                ChildHouseholdMemberDTO childHouseholdMemberDTO = new ChildHouseholdMemberDTO();
+                childHouseholdMemberDTO.setFirstName(householdMember.getFirstName());
+                childHouseholdMemberDTO.setLastName(householdMember.getLastName());
+                childHouseholdMemberDTOList.add(childHouseholdMemberDTO);
+            }
+        }
+        return childHouseholdMemberDTOList;
+    }
+
+    public List<String> getPhoneNumbersPerFirestation(String station) {
 
         List<String> phoneNumbersPerFirestationList = new ArrayList<>();
 
@@ -185,79 +175,101 @@ public class PersonService {
         return phoneNumbersPerFirestationList;
     }
 
-    public List<FireAlert> getFireAlert(String address) {
+    public List<PersonForFireAlertDTO> getFireAlert(String address) {
 
-        List<Person> personList = jsonReaderUtil.getPersonList();
-        List<Firestation> firestationList = jsonReaderUtil.getFirestationList();
-        List<MedicalRecord> medicalRecordList = jsonReaderUtil.getMedicalRecordsList();
-
-        List<FireAlert> fireAlertList = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+        List<PersonForFireAlertDTO> personForFireAlertDTOList = new ArrayList<>();
 
         for(Person person : personList) {
             if(person.getAddress().equals(address)) {
 
-                FireAlert fireAlert = new FireAlert();
+                PersonForFireAlertDTO personForFireAlertDTO = new PersonForFireAlertDTO();
 
-                fireAlert.setFirstName(person.getFirstName());
-                fireAlert.setLastName(person.getLastName());
-                fireAlert.setPhoneNumber(person.getPhone());
-
-                for(MedicalRecord medicalRecord : medicalRecordList) {
-                    if(person.getFirstName().equals(medicalRecord.getFirstName()) && person.getLastName().equals(medicalRecord.getLastName())) {
-
-                        fireAlert.setAge(Period.between(medicalRecord.getBirthdate(), today).getYears());
-                        fireAlert.setMedicines(medicalRecord.getMedications());
-                        fireAlert.setAllergies(medicalRecord.getAllergies());
-                    }
-                }
+                personForFireAlertDTO.setFirstName(person.getFirstName());
+                personForFireAlertDTO.setLastName(person.getLastName());
+                personForFireAlertDTO.setPhoneNumber(person.getPhone());
+                personForFireAlertDTO.setAge(Period.between(person.getMedicalRecord().getBirthdate(), today).getYears());
+                personForFireAlertDTO.setMedicines(person.getMedicalRecord().getMedications());
+                personForFireAlertDTO.setAllergies(person.getMedicalRecord().getAllergies());
 
                 for(Firestation firestation : firestationList) {
                     if(firestation.getAddress().equals(address)) {
-                        fireAlert.setFirestation(firestation.getStation());
+                        personForFireAlertDTO.setFirestation(firestation.getStation());
                     }
                 }
 
-                fireAlertList.add(fireAlert);
+                personForFireAlertDTOList.add(personForFireAlertDTO);
             }
         }
-        return fireAlertList;
+        return personForFireAlertDTOList;
     }
 
-    public List<PersonInfo> getPersonInfo(String firstName, String lastName) {
+    public List<PersonInfoDTO> getPersonInfo(String firstName, String lastName) {
 
-        List<Person> personList = jsonReaderUtil.getPersonList();
-        List<MedicalRecord> medicalRecordList = jsonReaderUtil.getMedicalRecordsList();
-
-        List<PersonInfo> personInfoList = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+        List<PersonInfoDTO> personInfoDTOList = new ArrayList<>();
 
         for(Person person : personList) {
             if(person.getFirstName().equals(firstName) && person.getLastName().equals(lastName)) {
 
-                PersonInfo personInfo = new PersonInfo();
+                PersonInfoDTO personInfoDTO = new PersonInfoDTO();
 
-                personInfo.setFirstName(person.getFirstName());
-                personInfo.setLastName(person.getLastName());
-                personInfo.setAddress(person.getAddress());
-                personInfo.setEmail(person.getEmail());
+                personInfoDTO.setFirstName(person.getFirstName());
+                personInfoDTO.setLastName(person.getLastName());
+                personInfoDTO.setAddress(person.getAddress());
+                personInfoDTO.setEmail(person.getEmail());
+                personInfoDTO.setAge(Period.between(person.getMedicalRecord().getBirthdate(), today).getYears());
+                personInfoDTO.setMedication(person.getMedicalRecord().getMedications());
+                personInfoDTO.setAllergies(person.getMedicalRecord().getAllergies());
 
-                for(MedicalRecord medicalRecord : medicalRecordList) {
-                    if(person.getFirstName().equals(medicalRecord.getFirstName()) && person.getLastName().equals(medicalRecord.getLastName())) {
-
-                        personInfo.setAge(Period.between(medicalRecord.getBirthdate(), today).getYears());
-                        personInfo.setMedication(medicalRecord.getMedications());
-                        personInfo.setAllergies(medicalRecord.getAllergies());
-                    }
-                }
-
-                personInfoList.add(personInfo);
+                personInfoDTOList.add(personInfoDTO);
             }
         }
-        return personInfoList;
+        return personInfoDTOList;
     }
 
-    public List<String> getEmails(String city) {
+//    public List<Household> getFloodAlert(List<String> stationsList) {
+//
+//        List<Firestation> firestationList = jsonReaderUtil.getFirestationList();
+//        List<Person> personList = jsonReaderUtil.getPersonList();
+//        List<MedicalRecord> medicalRecordList = jsonReaderUtil.getMedicalRecordsList();
+//
+//        List<Household> householdAddressStationList = new ArrayList<>();
+//
+//        for(String station : stationsList) {
+//            for(Firestation firestation : firestationList) {
+//                if(station.equals(firestation.getStation())) {
+//                    for(Person person : personList) {
+//                        if(person.getAddress().equals(firestation.getAddress())) {
+//
+//                            PersonForFireAlertDTO personForFireAlertDTO = new PersonForFireAlertDTO();
+//                            Household householdAddressStation = new Household();
+//
+//                            personForFireAlertDTO.setFirstName(person.getFirstName());
+//                            personForFireAlertDTO.setLastName(person.getLastName());
+//                            personForFireAlertDTO.setPhoneNumber(person.getPhone());
+//
+//                            for(MedicalRecord medicalRecord : medicalRecordList) {
+//                                if(person.getFirstName().equals(medicalRecord.getFirstName()) && person.getLastName().equals(medicalRecord.getLastName())) {
+//
+//                                    personForFireAlertDTO.setAge(Period.between(medicalRecord.getBirthdate(), today).getYears());
+//                                    personForFireAlertDTO.setMedicines(medicalRecord.getMedications());
+//                                    personForFireAlertDTO.setAllergies(medicalRecord.getAllergies());
+//                                }
+//                            }
+//
+//                            householdAddressStation.setPersonForFireAlertDTOS(personForFireAlertDTO);
+//                            householdAddressStationList.add(householdAddressStation);
+//
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        return householdAddressStationList;
+//    }
 
-        List<Person> personList = jsonReaderUtil.getPersonList();
+    public List<String> getEmails(String city) {
 
         List<String> emailList = new ArrayList<>();
 
@@ -268,6 +280,4 @@ public class PersonService {
         }
         return emailList;
     }
-
-
 }
