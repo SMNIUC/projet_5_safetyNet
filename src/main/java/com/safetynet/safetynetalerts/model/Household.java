@@ -9,6 +9,6 @@ import java.util.List;
 @Component
 public class Household {
 
-    private List<PersonForFireAlertDTO> personForFireAlertDTOS;
+    private List<PersonForFloodAlertDTO> personsInThisHousehold;
 
 }

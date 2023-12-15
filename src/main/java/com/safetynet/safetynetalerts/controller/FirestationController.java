@@ -52,8 +52,8 @@ public class FirestationController {
     }
 
     //GET - returns a list of all households for a specific firestation in case of a flood
-//    @GetMapping("/flood/stations")
-//    public List<Household> getFloodAlert(@RequestParam List<String> stationsList) {
-//        return personService.getFloodAlert(stationsList);
-//    }
+    @GetMapping("/flood/stations")
+    public List<Household> getFloodAlert(@RequestParam List<String> stationsList) {
+        return personService.getFloodAlert(stationsList);
+    }
 }

@@ -176,16 +176,4 @@ public class JsonReaderUtil {
         }
         return queriedRecord;
     }
-
-    public Firestation getFirestationByName(Person person) {
-
-        Firestation queriedStation = null;
-
-        for(Firestation firestation : firestationList) {
-            if(firestation.getAddress().equals(person.getAddress())) {
-                queriedStation = firestation;
-            }
-        }
-        return queriedStation;
-    }
 }

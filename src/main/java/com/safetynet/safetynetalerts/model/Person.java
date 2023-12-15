@@ -1,12 +1,10 @@
 package com.safetynet.safetynetalerts.model;
 
-import com.safetynet.safetynetalerts.utils.JsonReaderUtil;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.List;
 
 @Data
 @Component

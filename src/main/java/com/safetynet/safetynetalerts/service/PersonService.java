@@ -18,6 +18,7 @@ public class PersonService {
     private static final JsonReaderUtil jsonReaderUtil = new JsonReaderUtil();
     private static final List<Person> personList = jsonReaderUtil.getPersonList();
     private static final List<Firestation> firestationList = jsonReaderUtil.getFirestationList();
+    LocalDate today = LocalDate.now();
 
     //TEST - list all Person content
     public List<Person> getAllPersons() {
@@ -120,7 +121,6 @@ public class PersonService {
 
     public List<ChildrenPerHousehold> getChildrenPerHousehold(String address) {
 
-        LocalDate today = LocalDate.now();
         List<Person> householdMembers = jsonReaderUtil.getPersonList();
 
         List<ChildrenPerHousehold> childrenPerHouseholdList = new ArrayList<>();
@@ -177,7 +177,6 @@ public class PersonService {
 
     public List<PersonForFireAlertDTO> getFireAlert(String address) {
 
-        LocalDate today = LocalDate.now();
         List<PersonForFireAlertDTO> personForFireAlertDTOList = new ArrayList<>();
 
         for(Person person : personList) {
@@ -206,7 +205,6 @@ public class PersonService {
 
     public List<PersonInfoDTO> getPersonInfo(String firstName, String lastName) {
 
-        LocalDate today = LocalDate.now();
         List<PersonInfoDTO> personInfoDTOList = new ArrayList<>();
 
         for(Person person : personList) {
@@ -228,46 +226,39 @@ public class PersonService {
         return personInfoDTOList;
     }
 
-//    public List<Household> getFloodAlert(List<String> stationsList) {
-//
-//        List<Firestation> firestationList = jsonReaderUtil.getFirestationList();
-//        List<Person> personList = jsonReaderUtil.getPersonList();
-//        List<MedicalRecord> medicalRecordList = jsonReaderUtil.getMedicalRecordsList();
-//
-//        List<Household> householdAddressStationList = new ArrayList<>();
-//
-//        for(String station : stationsList) {
-//            for(Firestation firestation : firestationList) {
-//                if(station.equals(firestation.getStation())) {
-//                    for(Person person : personList) {
-//                        if(person.getAddress().equals(firestation.getAddress())) {
-//
-//                            PersonForFireAlertDTO personForFireAlertDTO = new PersonForFireAlertDTO();
-//                            Household householdAddressStation = new Household();
-//
-//                            personForFireAlertDTO.setFirstName(person.getFirstName());
-//                            personForFireAlertDTO.setLastName(person.getLastName());
-//                            personForFireAlertDTO.setPhoneNumber(person.getPhone());
-//
-//                            for(MedicalRecord medicalRecord : medicalRecordList) {
-//                                if(person.getFirstName().equals(medicalRecord.getFirstName()) && person.getLastName().equals(medicalRecord.getLastName())) {
-//
-//                                    personForFireAlertDTO.setAge(Period.between(medicalRecord.getBirthdate(), today).getYears());
-//                                    personForFireAlertDTO.setMedicines(medicalRecord.getMedications());
-//                                    personForFireAlertDTO.setAllergies(medicalRecord.getAllergies());
-//                                }
-//                            }
-//
-//                            householdAddressStation.setPersonForFireAlertDTOS(personForFireAlertDTO);
-//                            householdAddressStationList.add(householdAddressStation);
-//
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        return householdAddressStationList;
-//    }
+    public List<Household> getFloodAlert(List<String> stationsList) {
+
+        List<Household> householdList = new ArrayList<>();
+
+        for(String station : stationsList) {
+            for(Firestation firestation : firestationList) {
+                if(station.equals(firestation.getStation())) {
+
+                    Household householdPerStation = new Household();
+
+                    List<PersonForFloodAlertDTO> personForFloodAlertDTOList = new ArrayList<>();
+                    for(Person person : personList) {
+                        if(person.getAddress().equals(firestation.getAddress())) {
+
+                            PersonForFloodAlertDTO personForFloodAlertDTO = new PersonForFloodAlertDTO();
+
+                            personForFloodAlertDTO.setFirstName(person.getFirstName());
+                            personForFloodAlertDTO.setLastName(person.getLastName());
+                            personForFloodAlertDTO.setPhoneNumber(person.getPhone());
+                            personForFloodAlertDTO.setAge(Period.between(person.getMedicalRecord().getBirthdate(), today).getYears());
+                            personForFloodAlertDTO.setMedicines(person.getMedicalRecord().getMedications());
+                            personForFloodAlertDTO.setAllergies(person.getMedicalRecord().getAllergies());
+
+                            personForFloodAlertDTOList.add(personForFloodAlertDTO);
+                        }
+                        householdPerStation.setPersonsInThisHousehold(personForFloodAlertDTOList);
+                    }
+                    householdList.add(householdPerStation);
+                }
+            }
+        }
+        return householdList;
+    }
 
     public List<String> getEmails(String city) {
 
