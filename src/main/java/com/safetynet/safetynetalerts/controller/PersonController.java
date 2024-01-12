@@ -5,6 +5,7 @@ import com.safetynet.safetynetalerts.model.Person;
 import com.safetynet.safetynetalerts.model.PersonInfoDTO;
 import com.safetynet.safetynetalerts.service.PersonService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,12 +15,6 @@ import java.util.List;
 public class PersonController {
 
     private final PersonService personService;
-
-    //TEST - List all Person content
-    @GetMapping("/persons/all")
-    public List<Person> getAllPersons() {
-        return personService.getAllPersons();
-    }
 
     //CREATE - Add a new person
     @PostMapping("/person")
@@ -35,6 +30,7 @@ public class PersonController {
 
     //DELETE - delete a person from personList
     @DeleteMapping("/person")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deletePerson(@RequestParam String firstName, @RequestParam String lastName) {
         personService.deletePerson(firstName, lastName);
     }

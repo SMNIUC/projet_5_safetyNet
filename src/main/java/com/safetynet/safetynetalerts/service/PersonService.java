@@ -80,6 +80,11 @@ public class PersonService {
         personList.remove(personToDelete);
     }
 
+    public boolean isChild(Person person) {
+        int age = Period.between(person.getMedicalRecord().getBirthdate(), today).getYears();
+        return age < 18;
+    }
+
     //Returns list of counted children and adults covered by a certain firestation
     public List<PersonPerFirestationDTO> getPersonPerFirestation(String station) {
 
@@ -102,7 +107,7 @@ public class PersonService {
                         personPerFireStationDTO.setCity(person.getCity());
                         personPerFireStationDTO.setZip(person.getZip());
                         personPerFireStationDTO.setPhone(person.getPhone());
-                        if(person.isChild()) {
+                        if(isChild(person)) {
                             children++;
                         } else {
                             adults++;
@@ -126,7 +131,7 @@ public class PersonService {
         List<ChildrenPerHousehold> childrenPerHouseholdList = new ArrayList<>();
 
         for(Person person : personList) {
-            if(person.getAddress().equals(address) && (person.isChild())) {
+            if(person.getAddress().equals(address) && (isChild(person))) {
 
                 ChildrenPerHousehold childrenPerHousehold = new ChildrenPerHousehold();
 

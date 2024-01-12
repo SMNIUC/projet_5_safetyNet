@@ -3,6 +3,7 @@ package com.safetynet.safetynetalerts.controller;
 import com.safetynet.safetynetalerts.model.MedicalRecord;
 import com.safetynet.safetynetalerts.service.MedicalRecordService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,12 +13,6 @@ import java.util.List;
 public class MedicalRecordController {
 
     private final MedicalRecordService medicalRecordService;
-
-    //TEST - List all MedicalRecord content
-    @GetMapping("/medicalrecords/all")
-    public List<MedicalRecord> getAllMedicalRecords() {
-        return medicalRecordService.getAllMedicalRecords();
-    }
 
     //CREATE - Add a new medical record
     @PostMapping("/medicalRecord")
@@ -33,6 +28,7 @@ public class MedicalRecordController {
 
     //DELETE - delete a medical record from medicalRecordList
     @DeleteMapping("/medicalRecord")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteMedicalRecord(@RequestParam String firstName, @RequestParam String lastName) {
         medicalRecordService.deleteMedicalRecord(firstName, lastName);
     }

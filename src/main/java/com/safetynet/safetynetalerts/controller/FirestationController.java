@@ -4,6 +4,7 @@ import com.safetynet.safetynetalerts.model.*;
 import com.safetynet.safetynetalerts.service.FirestationService;
 import com.safetynet.safetynetalerts.service.PersonService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,12 +15,6 @@ public class FirestationController {
 
     private final FirestationService firestationService;
     private final PersonService personService;
-
-    //TEST - List all Firestation content
-    @GetMapping("/firestations/all")
-    public List<Firestation> getAllFirestations() {
-        return firestationService.getAllFirestations();
-    }
 
     //CREATE - Add a new firestation
     @PostMapping("/firestation")
@@ -35,6 +30,7 @@ public class FirestationController {
 
     //DELETE - delete a firestation from firestationList
     @DeleteMapping("/firestation")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteFirestation(@RequestParam String address, @RequestParam String station) {
         firestationService.deleteFirestation(address, station);
     }
