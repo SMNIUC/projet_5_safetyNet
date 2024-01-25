@@ -1,5 +1,6 @@
 package com.safetynet.safetynetalerts.model;
 
+import com.safetynet.safetynetalerts.model.Dtos.PersonForFloodAlertDto;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
@@ -9,6 +10,6 @@ import java.util.List;
 @Component
 public class Household {
 
-    private List<PersonForFloodAlertDTO> personsInThisHousehold;
+    private List<PersonForFloodAlertDto> personsInThisHousehold;
 
 }

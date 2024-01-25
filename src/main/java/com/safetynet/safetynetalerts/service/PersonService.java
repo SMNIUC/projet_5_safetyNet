@@ -1,6 +1,6 @@
 package com.safetynet.safetynetalerts.service;
 
-import com.safetynet.safetynetalerts.model.PersonPerFirestationDTO;
+import com.safetynet.safetynetalerts.model.Dtos.*;
 import com.safetynet.safetynetalerts.model.*;
 import com.safetynet.safetynetalerts.utils.JsonReaderUtil;
 import lombok.RequiredArgsConstructor;
@@ -20,17 +20,12 @@ public class PersonService {
     private static final List<Firestation> firestationList = jsonReaderUtil.getFirestationList();
     LocalDate today = LocalDate.now();
 
-    //TEST - list all Person content
-    public List<Person> getAllPersons() {
-        return jsonReaderUtil.getPersonList();
-    }
-
     //Add a new person
-    public Person addNewPerson(Person newPerson) {
+    public List<Person> addNewPerson(Person newPerson) {
 
         personList.add(newPerson);
 
-        return newPerson;
+        return personList;
     }
 
     //Update a person's details
@@ -86,9 +81,9 @@ public class PersonService {
     }
 
     //Returns list of counted children and adults covered by a certain firestation
-    public List<PersonPerFirestationDTO> getPersonPerFirestation(String station) {
+    public List<PersonPerFirestationDto> getPersonPerFirestation(String station) {
 
-        List<PersonPerFirestationDTO> personPerFireStationListDTO = new ArrayList<>();
+        List<PersonPerFirestationDto> personPerFireStationListDTO = new ArrayList<>();
 
         int adults = 0;
         int children = 0;
@@ -99,7 +94,7 @@ public class PersonService {
                 for (Person person : personList) {
                     if (person.getAddress().equals(address)) {
 
-                        PersonPerFirestationDTO personPerFireStationDTO = new PersonPerFirestationDTO();
+                        PersonPerFirestationDto personPerFireStationDTO = new PersonPerFirestationDto();
 
                         personPerFireStationDTO.setFirstName(person.getFirstName());
                         personPerFireStationDTO.setLastName(person.getLastName());
@@ -124,42 +119,42 @@ public class PersonService {
         return personPerFireStationListDTO;
     }
 
-    public List<ChildrenPerHousehold> getChildrenPerHousehold(String address) {
+    public List<ChildrenPerHouseholdDto> getChildrenPerHousehold(String address) {
 
         List<Person> householdMembers = jsonReaderUtil.getPersonList();
 
-        List<ChildrenPerHousehold> childrenPerHouseholdList = new ArrayList<>();
+        List<ChildrenPerHouseholdDto> childrenPerHouseholdDtoList = new ArrayList<>();
 
         for(Person person : personList) {
             if(person.getAddress().equals(address) && (isChild(person))) {
 
-                ChildrenPerHousehold childrenPerHousehold = new ChildrenPerHousehold();
+                ChildrenPerHouseholdDto childrenPerHouseholdDTO = new ChildrenPerHouseholdDto();
 
-                childrenPerHousehold.setFirstName(person.getFirstName());
-                childrenPerHousehold.setLastName(person.getLastName());
-                childrenPerHousehold.setAge(Period.between(person.getMedicalRecord().getBirthdate(), today).getYears());
+                childrenPerHouseholdDTO.setFirstName(person.getFirstName());
+                childrenPerHouseholdDTO.setLastName(person.getLastName());
+                childrenPerHouseholdDTO.setAge(Period.between(person.getMedicalRecord().getBirthdate(), today).getYears());
 
-                List<ChildHouseholdMemberDTO> childHouseholdMemberDTOList = getChildHouseholdMemberDTOS(address, householdMembers, childrenPerHousehold);
-                childrenPerHousehold.setHouseholdMembers(childHouseholdMemberDTOList);
+                List<ChildHouseholdMemberDto> childHouseholdMemberDtoList = getChildHouseholdMemberDTOS(address, householdMembers, childrenPerHouseholdDTO);
+                childrenPerHouseholdDTO.setHouseholdMembers(childHouseholdMemberDtoList);
 
-                childrenPerHouseholdList.add(childrenPerHousehold);
+                childrenPerHouseholdDtoList.add(childrenPerHouseholdDTO);
             }
         }
-        return childrenPerHouseholdList;
+        return childrenPerHouseholdDtoList;
     }
 
-    private static List<ChildHouseholdMemberDTO> getChildHouseholdMemberDTOS(String address, List<Person> householdMembers, ChildrenPerHousehold childrenPerHousehold) {
-        List<ChildHouseholdMemberDTO> childHouseholdMemberDTOList = new ArrayList<>();
+    public static List<ChildHouseholdMemberDto> getChildHouseholdMemberDTOS(String address, List<Person> householdMembers, ChildrenPerHouseholdDto childrenPerHouseholdDTO) {
+        List<ChildHouseholdMemberDto> childHouseholdMemberDtoList = new ArrayList<>();
 
         for(Person householdMember : householdMembers){
-            if(householdMember.getAddress().equals(address) && !householdMember.getFirstName().equals(childrenPerHousehold.getFirstName())) {
-                ChildHouseholdMemberDTO childHouseholdMemberDTO = new ChildHouseholdMemberDTO();
+            if(householdMember.getAddress().equals(address) && !householdMember.getFirstName().equals(childrenPerHouseholdDTO.getFirstName())) {
+                ChildHouseholdMemberDto childHouseholdMemberDTO = new ChildHouseholdMemberDto();
                 childHouseholdMemberDTO.setFirstName(householdMember.getFirstName());
                 childHouseholdMemberDTO.setLastName(householdMember.getLastName());
-                childHouseholdMemberDTOList.add(childHouseholdMemberDTO);
+                childHouseholdMemberDtoList.add(childHouseholdMemberDTO);
             }
         }
-        return childHouseholdMemberDTOList;
+        return childHouseholdMemberDtoList;
     }
 
     public List<String> getPhoneNumbersPerFirestation(String station) {
@@ -180,14 +175,14 @@ public class PersonService {
         return phoneNumbersPerFirestationList;
     }
 
-    public List<PersonForFireAlertDTO> getFireAlert(String address) {
+    public List<PersonForFireAlertDto> getFireAlert(String address) {
 
-        List<PersonForFireAlertDTO> personForFireAlertDTOList = new ArrayList<>();
+        List<PersonForFireAlertDto> personForFireAlertDtoList = new ArrayList<>();
 
         for(Person person : personList) {
             if(person.getAddress().equals(address)) {
 
-                PersonForFireAlertDTO personForFireAlertDTO = new PersonForFireAlertDTO();
+                PersonForFireAlertDto personForFireAlertDTO = new PersonForFireAlertDto();
 
                 personForFireAlertDTO.setFirstName(person.getFirstName());
                 personForFireAlertDTO.setLastName(person.getLastName());
@@ -202,20 +197,20 @@ public class PersonService {
                     }
                 }
 
-                personForFireAlertDTOList.add(personForFireAlertDTO);
+                personForFireAlertDtoList.add(personForFireAlertDTO);
             }
         }
-        return personForFireAlertDTOList;
+        return personForFireAlertDtoList;
     }
 
-    public List<PersonInfoDTO> getPersonInfo(String firstName, String lastName) {
+    public List<PersonInfoDto> getPersonInfo(String firstName, String lastName) {
 
-        List<PersonInfoDTO> personInfoDTOList = new ArrayList<>();
+        List<PersonInfoDto> personInfoDtoList = new ArrayList<>();
 
         for(Person person : personList) {
             if(person.getFirstName().equals(firstName) && person.getLastName().equals(lastName)) {
 
-                PersonInfoDTO personInfoDTO = new PersonInfoDTO();
+                PersonInfoDto personInfoDTO = new PersonInfoDto();
 
                 personInfoDTO.setFirstName(person.getFirstName());
                 personInfoDTO.setLastName(person.getLastName());
@@ -225,10 +220,10 @@ public class PersonService {
                 personInfoDTO.setMedication(person.getMedicalRecord().getMedications());
                 personInfoDTO.setAllergies(person.getMedicalRecord().getAllergies());
 
-                personInfoDTOList.add(personInfoDTO);
+                personInfoDtoList.add(personInfoDTO);
             }
         }
-        return personInfoDTOList;
+        return personInfoDtoList;
     }
 
     public List<Household> getFloodAlert(List<String> stationsList) {
@@ -241,11 +236,11 @@ public class PersonService {
 
                     Household householdPerStation = new Household();
 
-                    List<PersonForFloodAlertDTO> personForFloodAlertDTOList = new ArrayList<>();
+                    List<PersonForFloodAlertDto> personForFloodAlertDtoList = new ArrayList<>();
                     for(Person person : personList) {
                         if(person.getAddress().equals(firestation.getAddress())) {
 
-                            PersonForFloodAlertDTO personForFloodAlertDTO = new PersonForFloodAlertDTO();
+                            PersonForFloodAlertDto personForFloodAlertDTO = new PersonForFloodAlertDto();
 
                             personForFloodAlertDTO.setFirstName(person.getFirstName());
                             personForFloodAlertDTO.setLastName(person.getLastName());
@@ -254,9 +249,9 @@ public class PersonService {
                             personForFloodAlertDTO.setMedicines(person.getMedicalRecord().getMedications());
                             personForFloodAlertDTO.setAllergies(person.getMedicalRecord().getAllergies());
 
-                            personForFloodAlertDTOList.add(personForFloodAlertDTO);
+                            personForFloodAlertDtoList.add(personForFloodAlertDTO);
                         }
-                        householdPerStation.setPersonsInThisHousehold(personForFloodAlertDTOList);
+                        householdPerStation.setPersonsInThisHousehold(personForFloodAlertDtoList);
                     }
                     householdList.add(householdPerStation);
                 }
@@ -275,5 +270,10 @@ public class PersonService {
             }
         }
         return emailList;
+    }
+
+    //TESTING
+    public List<Person> getAllPersons() {
+        return jsonReaderUtil.getPersonList();
     }
 }

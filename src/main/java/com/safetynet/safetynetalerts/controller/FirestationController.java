@@ -1,6 +1,8 @@
 package com.safetynet.safetynetalerts.controller;
 
 import com.safetynet.safetynetalerts.model.*;
+import com.safetynet.safetynetalerts.model.Dtos.PersonForFireAlertDto;
+import com.safetynet.safetynetalerts.model.Dtos.PersonPerFirestationDto;
 import com.safetynet.safetynetalerts.service.FirestationService;
 import com.safetynet.safetynetalerts.service.PersonService;
 import lombok.RequiredArgsConstructor;
@@ -37,13 +39,13 @@ public class FirestationController {
 
     //GET - returns list of persons covered by a certain firestation
     @GetMapping("/firestation")
-    public List<PersonPerFirestationDTO> getPersonPerFirestation(@RequestParam String station) {
+    public List<PersonPerFirestationDto> getPersonPerFirestation(@RequestParam String station) {
         return personService.getPersonPerFirestation(station);
     }
 
     //GET - returns a list of inhabitants at a specific address and the associated firestation
     @GetMapping("/fire")
-    public List<PersonForFireAlertDTO> getFireAlert(@RequestParam String address) {
+    public List<PersonForFireAlertDto> getFireAlert(@RequestParam String address) {
         return personService.getFireAlert(address);
     }
 

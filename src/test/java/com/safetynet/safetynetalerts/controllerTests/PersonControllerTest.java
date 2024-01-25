@@ -1,39 +1,30 @@
 package com.safetynet.safetynetalerts.controllerTests;
 
 import com.jsoniter.output.JsonStream;
+import com.safetynet.safetynetalerts.model.MedicalRecord;
 import com.safetynet.safetynetalerts.model.Person;
 import com.safetynet.safetynetalerts.service.MedicalRecordService;
 import com.safetynet.safetynetalerts.service.PersonService;
-import com.safetynet.safetynetalerts.utils.JsonReaderUtil;
-import org.junit.After;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_CLASS;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -54,21 +45,47 @@ class PersonControllerTest {
     @InjectMocks
     private MedicalRecordService medicalRecordService;
 
+    private Person person;
+    private String firstName = "Mark";
+    private String lastName = "Twain";
+    private String address = "69 Main St";
+    private String city = "NYC";
+    private String zip = "38218";
+    private String phone = "456-857-8463";
+    private String email = "mark.twain@toocool.com";
+    private MedicalRecord medicalRecord;
+    private List<String> medications = new ArrayList<>();
+    private List<String> allergies = new ArrayList<>();
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+    private LocalDate birthday = LocalDate.parse("05/06/2010", formatter);
+
     @BeforeEach
     public void setupMockMvc() {
         mvc = MockMvcBuilders.webAppContextSetup(webContext).build();
+        person = new Person();
+        person.setFirstName(firstName);
+        person.setLastName(lastName);
+        person.setAddress(address);
+        person.setCity(city);
+        person.setZip(zip);
+        person.setPhone(phone);
+        person.setEmail(email);
+        medicalRecord = new MedicalRecord();
+        medicalRecord.setFirstName(firstName);
+        medicalRecord.setLastName(lastName);
+        medications.add("omeprazol");
+        medicalRecord.setMedications(medications);
+        allergies.add("peanuts");
+        medicalRecord.setAllergies(allergies);
+        medicalRecord.setBirthdate(birthday);
     }
 
     //Test for Person POST
     @Test
     void addNewPerson() throws Exception {
-        Person person = new Person();
-        person.setFirstName("Mark");
-        person.setLastName("Twain");
         String requestJson = JsonStream.serialize(person);
 
-        mvc.perform(MockMvcRequestBuilders
-                        .post("/person")
+        mvc.perform(MockMvcRequestBuilders.post("/person")
                         .contentType(APPLICATION_JSON)
                         .content(requestJson))
                 .andDo(print())
@@ -79,14 +96,10 @@ class PersonControllerTest {
     //Test for Person PUT
     @Test
     void updatePersonInfo() throws Exception {
-        Person person = new Person();
-        person.setCity("NYC");
         String requestJson = JsonStream.serialize(person);
-
-        mvc.perform(MockMvcRequestBuilders
-                        .put("/person")
-                        .param("firstName", "John")
-                        .param("lastName", "Boyd")
+        mvc.perform(MockMvcRequestBuilders.put("/person")
+                        .param("firstName", "Mark")
+                        .param("lastName", "Twain")
                         .contentType(APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(status().isOk())
@@ -97,8 +110,7 @@ class PersonControllerTest {
     @Test
     void deletePerson() throws Exception {
 
-        mvc.perform(MockMvcRequestBuilders
-                        .delete("/person")
+        mvc.perform(MockMvcRequestBuilders.delete("/person")
                         .param("firstName", "John")
                         .param("lastName", "Boyd"))
                 .andExpect(status().isNoContent());
@@ -120,28 +132,34 @@ class PersonControllerTest {
     //Test for Person GET - returns a list of phone numbers per firestation
     @Test
     void getPhoneNumbersPerFirestation() throws Exception {
+        String requestJson = JsonStream.serialize(person);
+
+        mvc.perform(MockMvcRequestBuilders.post("/person")
+                .contentType(APPLICATION_JSON)
+                .content(requestJson));
+
         mvc.perform(MockMvcRequestBuilders.get("/phoneAlert")
                         .param("station", "3")
                         .contentType(APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$", hasSize(13)))
-                .andExpect(jsonPath("$[0]").value("841-874-6512"));
+                .andExpect(jsonPath("$", hasSize(12)))
+                .andExpect(jsonPath("$[0]").value("841-874-6513"));
     }
 
     //Test for Person GET - returns a list of personal info for each inhabitant
     @Test
     void getPersonInfo() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/personInfo")
-                        .param("firstName", "John")
-                        .param("lastName", "Boyd")
+                        .param("firstName", "Zach")
+                        .param("lastName", "Zemicks")
                         .contentType(APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].address").value("1509 Culver St"));
+                .andExpect(jsonPath("$[0].address").value("892 Downing Ct"));
     }
 
     //Test for Person GET - returns a list of all the city inhabitants' email
@@ -153,7 +171,7 @@ class PersonControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$", hasSize(23)))
-                .andExpect(jsonPath("$[0]").value("jaboyd@email.com"));
+                .andExpect(jsonPath("$", hasSize(22)))
+                .andExpect(jsonPath("$[0]").value("drk@email.com"));
     }
 }

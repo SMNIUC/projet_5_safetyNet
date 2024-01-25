@@ -1,4 +1,4 @@
-package com.safetynet.safetynetalerts.model;
+package com.safetynet.safetynetalerts.model.Dtos;
 
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @Component
-public class PersonInfoDTO {
+public class PersonInfoDto {
 
     private String firstName;
     private String lastName;

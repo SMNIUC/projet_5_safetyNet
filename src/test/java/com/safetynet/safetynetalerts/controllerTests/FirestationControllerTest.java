@@ -67,12 +67,12 @@ class FirestationControllerTest {
     void updateFirestationInfo() throws Exception {
         Firestation firestation = new Firestation();
         firestation.setStation("1");
-        firestation.setAddress("1509 Culver St");
+        firestation.setAddress("644 Gershwin Cir");
         String requestJson = JsonStream.serialize(firestation);
 
         mvc.perform(MockMvcRequestBuilders
                         .put("/firestation")
-                        .param("address", "1509 Culver St")
+                        .param("address", "644 Gershwin Cir")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
                 .andExpect(status().isOk())

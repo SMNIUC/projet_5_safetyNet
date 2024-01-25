@@ -1,8 +1,8 @@
 package com.safetynet.safetynetalerts.controller;
 
-import com.safetynet.safetynetalerts.model.ChildrenPerHousehold;
+import com.safetynet.safetynetalerts.model.Dtos.ChildrenPerHouseholdDto;
 import com.safetynet.safetynetalerts.model.Person;
-import com.safetynet.safetynetalerts.model.PersonInfoDTO;
+import com.safetynet.safetynetalerts.model.Dtos.PersonInfoDto;
 import com.safetynet.safetynetalerts.service.PersonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,9 +16,15 @@ public class PersonController {
 
     private final PersonService personService;
 
+    //TESTING
+    @GetMapping("/allpersons")
+    public List<Person> getAllPersons() {
+        return personService.getAllPersons();
+    }
+
     //CREATE - Add a new person
     @PostMapping("/person")
-    public Person addNewPerson(@RequestBody Person newPerson) {
+    public List<Person> addNewPerson(@RequestBody Person newPerson) {
         return personService.addNewPerson(newPerson);
     }
 
@@ -37,7 +43,7 @@ public class PersonController {
 
     //GET - returns a list of children living at a specific address
     @GetMapping("/childAlert")
-    public List<ChildrenPerHousehold> getChildrenPerHousehold(@RequestParam String address) {
+    public List<ChildrenPerHouseholdDto> getChildrenPerHousehold(@RequestParam String address) {
         return personService.getChildrenPerHousehold(address);
     }
 
@@ -49,7 +55,7 @@ public class PersonController {
 
     //GET - returns a list of personal info for each inhabitant
     @GetMapping("/personInfo")
-    public List<PersonInfoDTO> getPersonInfo(@RequestParam String firstName, @RequestParam String lastName) {
+    public List<PersonInfoDto> getPersonInfo(@RequestParam String firstName, @RequestParam String lastName) {
         return personService.getPersonInfo(firstName, lastName);
     }
 
