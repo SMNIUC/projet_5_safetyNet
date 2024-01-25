@@ -1,6 +1,7 @@
 package com.safetynet.safetynetalerts.controller;
 
 import com.safetynet.safetynetalerts.model.MedicalRecord;
+import com.safetynet.safetynetalerts.model.Person;
 import com.safetynet.safetynetalerts.service.MedicalRecordService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,9 +15,16 @@ public class MedicalRecordController {
 
     private final MedicalRecordService medicalRecordService;
 
+    //TESTING
+    @GetMapping("/medicalrecords/all")
+    public List<MedicalRecord> getAllMedicalRecords() {
+        return medicalRecordService.getAllMedicalRecords();
+    }
+
+
     //CREATE - Add a new medical record
     @PostMapping("/medicalRecord")
-    public MedicalRecord addNewMedicalRecord(@RequestBody MedicalRecord newMedicalRecord) {
+    public List<MedicalRecord> addNewMedicalRecord(@RequestBody MedicalRecord newMedicalRecord) {
         return medicalRecordService.addNewMedicalRecord(newMedicalRecord);
     }
 

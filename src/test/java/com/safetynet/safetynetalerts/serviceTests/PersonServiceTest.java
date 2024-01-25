@@ -99,7 +99,7 @@ class PersonServiceTest {
 
         service.deletePerson("Sophia", "Zemicks");
 
-        assertThat(personList).doesNotContain(personToDelete);
+        assertThat(personList).isNotEmpty().doesNotContain(personToDelete);
 
     }
 

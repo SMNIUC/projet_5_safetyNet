@@ -12,7 +12,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MedicalRecordService {
 
-    private final JsonReaderUtil jsonReaderUtil;
+    private final JsonReaderUtil jsonReaderUtil = new JsonReaderUtil();
 
     //TEST - list all MedicalRecord content
     public List<MedicalRecord> getAllMedicalRecords() {
@@ -20,12 +20,12 @@ public class MedicalRecordService {
     }
 
     //Add a new medical record
-    public MedicalRecord addNewMedicalRecord(MedicalRecord newMedicalRecord) {
+    public List<MedicalRecord> addNewMedicalRecord(MedicalRecord newMedicalRecord) {
 
         List<MedicalRecord> medicalRecordList = jsonReaderUtil.getMedicalRecordsList();
         medicalRecordList.add(newMedicalRecord);
 
-        return newMedicalRecord;
+        return medicalRecordList;
     }
 
     //Update a medical record
