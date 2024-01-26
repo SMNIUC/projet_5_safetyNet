@@ -11,7 +11,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FirestationService {
 
-    private final JsonReaderUtil jsonReaderUtil;
+    private final JsonReaderUtil jsonReaderUtil = new JsonReaderUtil();
 
     //TEST - list all Firestation content
     public List<Firestation> getAllFirestations() {
@@ -19,12 +19,12 @@ public class FirestationService {
     }
 
     //Add a new firestation
-    public Firestation addNewFirestation(Firestation newFirestation) {
+    public List<Firestation> addNewFirestation(Firestation newFirestation) {
 
         List<Firestation> firestationList = jsonReaderUtil.getFirestationList();
         firestationList.add(newFirestation);
 
-        return newFirestation;
+        return firestationList;
     }
 
     //Update a firestation details by address
@@ -51,14 +51,8 @@ public class FirestationService {
 
         List<Firestation> firestationList = jsonReaderUtil.getFirestationList();
 
-        if(station != null) {
-            Firestation firestationToDelete = jsonReaderUtil.getFirestationByStation(station);
-            firestationList.remove(firestationToDelete);
-
-        }
-
-        if(address != null) {
-            Firestation firestationToDelete = jsonReaderUtil.getFirestationByAddress(address);
+        if(station != null && address != null) {
+            Firestation firestationToDelete = jsonReaderUtil.getFirestationByStationAndAddress(station, address);
             firestationList.remove(firestationToDelete);
         }
     }

@@ -18,9 +18,16 @@ public class FirestationController {
     private final FirestationService firestationService;
     private final PersonService personService;
 
+    //TESTING
+    @GetMapping("/firestations/all")
+    public List<Firestation> getAllFirestations() {
+        return firestationService.getAllFirestations();
+    }
+
+
     //CREATE - Add a new firestation
     @PostMapping("/firestation")
-    public Firestation addNewFirestation(@RequestBody Firestation newFirestation) {
+    public List<Firestation> addNewFirestation(@RequestBody Firestation newFirestation) {
         return firestationService.addNewFirestation(newFirestation);
     }
 

@@ -131,7 +131,7 @@ public class JsonReaderUtil {
 
         for(Person person : personList) {
             if(person.getFirstName().equals(firstName) && (person.getLastName().equals(lastName))) {
-                    queriedPerson = person;
+                queriedPerson = person;
 
             }
         }
@@ -151,12 +151,12 @@ public class JsonReaderUtil {
         return queriedStation;
     }
 
-    public Firestation getFirestationByStation(String station) {
+    public Firestation getFirestationByStationAndAddress(String station, String address) {
 
         Firestation queriedStation = null;
 
         for(Firestation firestation : firestationList) {
-            if(firestation.getStation().equals(station)) {
+            if(firestation.getStation().equals(station) && firestation.getAddress().equals(address)) {
                 queriedStation = firestation;
 
             }
