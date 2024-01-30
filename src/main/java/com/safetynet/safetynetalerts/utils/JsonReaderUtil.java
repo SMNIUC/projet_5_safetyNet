@@ -6,6 +6,8 @@ import com.safetynet.safetynetalerts.model.Firestation;
 import com.safetynet.safetynetalerts.model.MedicalRecord;
 import com.safetynet.safetynetalerts.model.Person;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -20,6 +22,8 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 @Data
 @Component
@@ -34,7 +38,7 @@ public class JsonReaderUtil {
     public JsonReaderUtil() {
         try {
             this.readJSON();
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             e.printStackTrace();
         }
     }
@@ -151,12 +155,12 @@ public class JsonReaderUtil {
         return queriedStation;
     }
 
-    public Firestation getFirestationByStationAndAddress(String station, String address) {
+    public Firestation getFirestationByStation(String station) {
 
         Firestation queriedStation = null;
 
         for(Firestation firestation : firestationList) {
-            if(firestation.getStation().equals(station) && firestation.getAddress().equals(address)) {
+            if(firestation.getStation().equals(station)) {
                 queriedStation = firestation;
 
             }

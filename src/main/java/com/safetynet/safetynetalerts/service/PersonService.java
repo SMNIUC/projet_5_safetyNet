@@ -4,8 +4,13 @@ import com.safetynet.safetynetalerts.model.Dtos.*;
 import com.safetynet.safetynetalerts.model.*;
 import com.safetynet.safetynetalerts.utils.JsonReaderUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
@@ -15,10 +20,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PersonService {
 
-    private static final JsonReaderUtil jsonReaderUtil = new JsonReaderUtil();
-    private static final List<Person> personList = jsonReaderUtil.getPersonList();
-    private static final List<Firestation> firestationList = jsonReaderUtil.getFirestationList();
-    LocalDate today = LocalDate.now();
+    JsonReaderUtil jsonReaderUtil;
+
+    @Autowired
+    public PersonService(JsonReaderUtil jsonReaderUtil) {
+        this.jsonReaderUtil = jsonReaderUtil;
+    }
+
+    private List<Person> personList = jsonReaderUtil.getPersonList();
+    private List<Firestation> firestationList = jsonReaderUtil.getFirestationList();
+    private final LocalDate today = LocalDate.now();
 
     //Add a new person
     public List<Person> addNewPerson(Person newPerson) {

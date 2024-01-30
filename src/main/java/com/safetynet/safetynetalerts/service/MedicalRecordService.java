@@ -3,6 +3,7 @@ package com.safetynet.safetynetalerts.service;
 import com.safetynet.safetynetalerts.model.MedicalRecord;
 import com.safetynet.safetynetalerts.utils.JsonReaderUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -12,19 +13,24 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MedicalRecordService {
 
-    private final JsonReaderUtil jsonReaderUtil = new JsonReaderUtil();
+    private JsonReaderUtil jsonReaderUtil;
+    private List<MedicalRecord> medicalRecordList;
+
+    @Autowired
+    public MedicalRecordService(JsonReaderUtil jsonReaderUtil) {
+        this.jsonReaderUtil = jsonReaderUtil;
+        medicalRecordList = jsonReaderUtil.getMedicalRecordsList();
+    }
 
     //TEST - list all MedicalRecord content
     public List<MedicalRecord> getAllMedicalRecords() {
-        return jsonReaderUtil.getMedicalRecordsList();
+        return medicalRecordList;
     }
 
     //Add a new medical record
     public List<MedicalRecord> addNewMedicalRecord(MedicalRecord newMedicalRecord) {
 
-        List<MedicalRecord> medicalRecordList = jsonReaderUtil.getMedicalRecordsList();
         medicalRecordList.add(newMedicalRecord);
-
         return medicalRecordList;
     }
 
@@ -60,9 +66,7 @@ public class MedicalRecordService {
     //Delete a person
     public void deleteMedicalRecord(String firstName, String lastName) {
 
-        List<MedicalRecord> medicalRecordList = jsonReaderUtil.getMedicalRecordsList();
         MedicalRecord medicalRecordToDelete = jsonReaderUtil.getMedicalRecordByName(firstName, lastName);
-
         medicalRecordList.remove(medicalRecordToDelete);
     }
 }

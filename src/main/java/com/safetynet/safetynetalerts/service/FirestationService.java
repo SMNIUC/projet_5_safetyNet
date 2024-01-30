@@ -3,6 +3,7 @@ package com.safetynet.safetynetalerts.service;
 import com.safetynet.safetynetalerts.model.Firestation;
 import com.safetynet.safetynetalerts.utils.JsonReaderUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,19 +12,24 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FirestationService {
 
-    private final JsonReaderUtil jsonReaderUtil = new JsonReaderUtil();
+    private JsonReaderUtil jsonReaderUtil;
+    private List<Firestation> firestationList;
+
+    @Autowired
+    public FirestationService(JsonReaderUtil jsonReaderUtil) {
+        this.jsonReaderUtil = jsonReaderUtil;
+        firestationList = jsonReaderUtil.getFirestationList();
+    }
 
     //TEST - list all Firestation content
     public List<Firestation> getAllFirestations() {
-        return jsonReaderUtil.getFirestationList();
+        return firestationList;
     }
 
     //Add a new firestation
     public List<Firestation> addNewFirestation(Firestation newFirestation) {
 
-        List<Firestation> firestationList = jsonReaderUtil.getFirestationList();
         firestationList.add(newFirestation);
-
         return firestationList;
     }
 
@@ -49,10 +55,13 @@ public class FirestationService {
     //Delete a firestation
     public void deleteFirestation(String address, String station) {
 
-        List<Firestation> firestationList = jsonReaderUtil.getFirestationList();
+        if(station != null) {
+            Firestation firestationToDelete = jsonReaderUtil.getFirestationByStation(station);
+            firestationList.remove(firestationToDelete);
+        }
 
-        if(station != null && address != null) {
-            Firestation firestationToDelete = jsonReaderUtil.getFirestationByStationAndAddress(station, address);
+        if(address != null) {
+            Firestation firestationToDelete = jsonReaderUtil.getFirestationByAddress(address);
             firestationList.remove(firestationToDelete);
         }
     }

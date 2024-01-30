@@ -10,7 +10,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
@@ -20,15 +25,17 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+
 @WebMvcTest(PersonService.class)
 @ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = JsonReaderUtil.class)
 class PersonServiceTest {
 
-    private static final JsonReaderUtil jsonReaderUtil = new JsonReaderUtil();
-    private static final List<Person> personList = jsonReaderUtil.getPersonList();
+    private final JsonReaderUtil jsonReaderUtil = new JsonReaderUtil();
+    private final List<Person> personList = jsonReaderUtil.getPersonList();
 
     @InjectMocks
-    private PersonService service;
+    private PersonService service = new PersonService();
 
     private static Person personTest;
 
