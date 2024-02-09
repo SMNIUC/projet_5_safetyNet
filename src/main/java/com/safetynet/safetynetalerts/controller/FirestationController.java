@@ -6,6 +6,9 @@ import com.safetynet.safetynetalerts.model.Dtos.PersonPerFirestationDto;
 import com.safetynet.safetynetalerts.service.FirestationService;
 import com.safetynet.safetynetalerts.service.PersonService;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,45 +21,95 @@ public class FirestationController {
     private final FirestationService firestationService;
     private final PersonService personService;
 
-    //TESTING
+    private static final Logger log = LogManager.getLogger();
+
+    /**
+     * Returns the list of all the firestation information available
+     *
+     * @return - List of all the firestation information available
+     */
     @GetMapping("/firestations/all")
     public List<Firestation> getAllFirestations() {
         return firestationService.getAllFirestations();
     }
 
 
-    //CREATE - Add a new firestation
+    /**
+     * Creates new Firestation object
+     *
+     * @param newFirestation - New Firestation object to create
+     * @return               - New Firestation object
+     */
     @PostMapping("/firestation")
-    public List<Firestation> addNewFirestation(@RequestBody Firestation newFirestation) {
+    public Firestation addNewFirestation(@RequestBody Firestation newFirestation) {
         return firestationService.addNewFirestation(newFirestation);
     }
 
-    //UPDATE - update firestation details
+
+    /**
+     * Updates a Firestation object
+     *
+     * @param address     - Address of the firestation to update
+     * @param firestation - Firestation info to update with
+     * @return            - Updated Firestation object
+     */
     @PutMapping("/firestation")
     public Firestation updateFirestationInfo(@RequestParam String address, @RequestBody Firestation firestation) {
-        return firestationService.updateFirestationInfo(address, firestation);
+        try
+        {
+            return firestationService.updateFirestationInfo(address, firestation);
+        }
+        catch ( ResourceNotFoundException r )
+        {
+            log.error( r.getMessage() );
+            throw r;
+        }
     }
 
-    //DELETE - delete a firestation from firestationList
+
+    /**
+     * Deletes Firestation object
+     *
+     * @param address - Address of the firestation to delete
+     * @param station - Station number of the firestation to delete
+     */
     @DeleteMapping("/firestation")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteFirestation(@RequestParam String address, @RequestParam String station) {
         firestationService.deleteFirestation(address, station);
     }
 
-    //GET - returns list of persons covered by a certain firestation
+
+    /**
+     * Gets a list of persons covered by a certain firestation
+     *
+     * @param station - Number of the station to research
+     * @return        - List of persons covered by a certain firestation
+     */
     @GetMapping("/firestation")
     public List<PersonPerFirestationDto> getPersonPerFirestation(@RequestParam String station) {
         return personService.getPersonPerFirestation(station);
     }
 
-    //GET - returns a list of inhabitants at a specific address and the associated firestation
+
+    /**
+     * Gets a list of inhabitants at a specific address and the associated firestation
+     *
+     * @param address - Address to research
+     * @return        - List of inhabitants at a specific address and the associated firestation
+     */
     @GetMapping("/fire")
     public List<PersonForFireAlertDto> getFireAlert(@RequestParam String address) {
         return personService.getFireAlert(address);
     }
 
-    //GET - returns a list of all households for a specific firestation in case of a flood
+
+    /**
+     * Gets a list of all households for a specific firestation in case of a flood
+     *
+     * @param stationsList - List of station numbers to research
+     * @return             - List of all households for a specific firestation
+     */
     @GetMapping("/flood/stations")
     public List<Household> getFloodAlert(@RequestParam List<String> stationsList) {
         return personService.getFloodAlert(stationsList);

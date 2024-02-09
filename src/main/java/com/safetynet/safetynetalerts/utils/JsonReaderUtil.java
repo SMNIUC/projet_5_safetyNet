@@ -6,8 +6,6 @@ import com.safetynet.safetynetalerts.model.Firestation;
 import com.safetynet.safetynetalerts.model.MedicalRecord;
 import com.safetynet.safetynetalerts.model.Person;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -22,8 +20,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
 @Data
 @Component
@@ -43,6 +39,12 @@ public class JsonReaderUtil {
         }
     }
 
+
+    /**
+     * Reads the JSON file data and stores them in corresponding objects
+     *
+     * @throws IOException
+     */
     public void readJSON() throws IOException {
         // Accessing a resource from the classpath using Spring
         Resource resource = new ClassPathResource("static/data.json");
@@ -129,6 +131,14 @@ public class JsonReaderUtil {
         }
     }
 
+
+    /**
+     * Gets a person by name
+     *
+     * @param firstName - First name of the person to find
+     * @param lastName  - Last name of the person to find
+     * @return          - Corresponding Person object
+     */
     public Person getPersonByName(String firstName, String lastName) {
 
         Person queriedPerson = null;
@@ -142,6 +152,13 @@ public class JsonReaderUtil {
         return queriedPerson;
     }
 
+
+    /**
+     * Gets a Firestation by address
+     *
+     * @param address - Address of the firestation to find
+     * @return        - Corresponding Firestation object
+     */
     public Firestation getFirestationByAddress(String address) {
 
         Firestation queriedStation = null;
@@ -155,6 +172,13 @@ public class JsonReaderUtil {
         return queriedStation;
     }
 
+
+    /**
+     * Gets a Firestation by station number
+     *
+     * @param station - Number of the station to find
+     * @return        - Corresponding Firestation object
+     */
     public Firestation getFirestationByStation(String station) {
 
         Firestation queriedStation = null;
@@ -168,6 +192,14 @@ public class JsonReaderUtil {
         return queriedStation;
     }
 
+
+    /**
+     * Gets a Medical Record by the person's full name
+     *
+     * @param firstName - First name of the person's medical record to find
+     * @param lastName  - Last name of the person's medical record to find
+     * @return          - Corresponding Medical Record object
+     */
     public MedicalRecord getMedicalRecordByName(String firstName, String lastName) {
 
         MedicalRecord queriedRecord = null;

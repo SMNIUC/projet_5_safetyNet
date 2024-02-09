@@ -2,26 +2,17 @@ package com.safetynet.safetynetalerts.serviceTests;
 
 import com.safetynet.safetynetalerts.model.Firestation;
 import com.safetynet.safetynetalerts.service.FirestationService;
-import com.safetynet.safetynetalerts.utils.JsonReaderUtil;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@WebMvcTest(FirestationService.class)
-@ExtendWith(SpringExtension.class)
+@SpringBootTest
 class FirestationServiceTest {
 
-    private static final JsonReaderUtil jsonReaderUtil = new JsonReaderUtil();
-    private static final List<Firestation> firestationList = jsonReaderUtil.getFirestationList();
-
-    @InjectMocks
+    @Autowired
     private FirestationService service;
 
     private static Firestation firestationTest;
@@ -35,8 +26,8 @@ class FirestationServiceTest {
 
     @Test
     void addNewFirestationTest() {
-        List<Firestation> firestationListTest = service.addNewFirestation(firestationTest);
-        assertThat(firestationListTest).contains(firestationTest);
+        Firestation firestation = service.addNewFirestation(firestationTest);
+        assertThat(firestation).isEqualTo(firestationTest);
     }
 
     @Test
@@ -45,21 +36,19 @@ class FirestationServiceTest {
         Firestation firestationToUpdate = new Firestation();
         firestationToUpdate.setAddress("1509 Culver St");
         firestationToUpdate.setStation("2");
-
         Firestation firestationTest = service.updateFirestationInfo("1509 Culver St", firestationToUpdate);
 
         assertThat(firestationTest).isEqualTo(firestationToUpdate);
     }
 
-//    @Test
-//    void deleteFirestationTest() {
-//
-//        Firestation firestationTest = jsonReaderUtil.getFirestationByAddress("951 LoneTree Rd");
-//
-//        service.deleteFirestation("951 LoneTree Rd", "2");
-//
-//        assertThat(firestationList).isNotEmpty().doesNotContain(firestationTest);
-//
-//    }
+    @Test
+    void deleteFirestationTest() {
+
+
+        service.deleteFirestation("1509 Culver St", null );
+
+        assertThat(service.getAllFirestations()).isNotEmpty().doesNotContain(firestationTest);
+
+    }
 
 }

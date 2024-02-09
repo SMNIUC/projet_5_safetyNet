@@ -2,13 +2,10 @@ package com.safetynet.safetynetalerts.serviceTests;
 
 import com.safetynet.safetynetalerts.model.MedicalRecord;
 import com.safetynet.safetynetalerts.service.MedicalRecordService;
-import com.safetynet.safetynetalerts.utils.JsonReaderUtil;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -17,14 +14,11 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@WebMvcTest(MedicalRecordService.class)
-@ExtendWith(SpringExtension.class)
+@SpringBootTest
 class MedicalRecordServiceTest {
 
-    private static final JsonReaderUtil jsonReaderUtil = new JsonReaderUtil();
-    private static final List<MedicalRecord> medicalRecordList = jsonReaderUtil.getMedicalRecordsList();
 
-    @InjectMocks
+    @Autowired
     private MedicalRecordService service;
 
     private static MedicalRecord medicalRecordTest;
@@ -49,8 +43,8 @@ class MedicalRecordServiceTest {
     @Test
     void addNewMedicalRecordTest() {
 
-        List<MedicalRecord> medicalRecordListTest = service.addNewMedicalRecord(medicalRecordTest);
-        assertThat(medicalRecordListTest).contains(medicalRecordTest);
+        MedicalRecord medicalRecord = service.addNewMedicalRecord(medicalRecordTest);
+        assertThat(medicalRecord).isEqualTo(medicalRecordTest);
     }
 
     @Test
@@ -77,6 +71,6 @@ class MedicalRecordServiceTest {
     void deleteMedicalRecordTest() {
 
         service.deleteMedicalRecord("Reginold", "Walker");
-        assertThat(medicalRecordList).isNotEmpty().doesNotContain(medicalRecordTest);
+        assertThat(service.getAllMedicalRecords()).isNotEmpty().doesNotContain(medicalRecordTest);
     }
 }

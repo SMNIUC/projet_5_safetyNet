@@ -46,18 +46,18 @@ class PersonControllerTest {
     private MedicalRecordService medicalRecordService;
 
     private Person person;
-    private String firstName = "Mark";
-    private String lastName = "Twain";
-    private String address = "69 Main St";
-    private String city = "NYC";
-    private String zip = "38218";
-    private String phone = "456-857-8463";
-    private String email = "mark.twain@toocool.com";
+    private final String firstName = "Mark";
+    private final String lastName = "Twain";
+    private final String address = "69 Main St";
+    private final String city = "NYC";
+    private final String zip = "38218";
+    private final String phone = "456-857-8463";
+    private final String email = "mark.twain@toocool.com";
     private MedicalRecord medicalRecord;
-    private List<String> medications = new ArrayList<>();
-    private List<String> allergies = new ArrayList<>();
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-    private LocalDate birthday = LocalDate.parse("05/06/2010", formatter);
+    private final List<String> medications = new ArrayList<>();
+    private final List<String> allergies = new ArrayList<>();
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+    private final LocalDate birthday = LocalDate.parse("05/06/2010", formatter);
 
     @BeforeEach
     public void setupMockMvc() {
@@ -144,8 +144,8 @@ class PersonControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$", hasSize(12)))
-                .andExpect(jsonPath("$[0]").value("841-874-6513"));
+                .andExpect(jsonPath("$", hasSize(6)))
+                .andExpect(jsonPath("$[0]").value("841-874-6512"));
     }
 
     //Test for Person GET - returns a list of personal info for each inhabitant

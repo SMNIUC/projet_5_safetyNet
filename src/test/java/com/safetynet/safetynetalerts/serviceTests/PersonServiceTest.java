@@ -5,18 +5,10 @@ import com.safetynet.safetynetalerts.model.Household;
 import com.safetynet.safetynetalerts.model.MedicalRecord;
 import com.safetynet.safetynetalerts.model.Person;
 import com.safetynet.safetynetalerts.service.PersonService;
-import com.safetynet.safetynetalerts.utils.JsonReaderUtil;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -26,16 +18,11 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
-@WebMvcTest(PersonService.class)
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = JsonReaderUtil.class)
+@SpringBootTest
 class PersonServiceTest {
 
-    private final JsonReaderUtil jsonReaderUtil = new JsonReaderUtil();
-    private final List<Person> personList = jsonReaderUtil.getPersonList();
-
-    @InjectMocks
-    private PersonService service = new PersonService();
+    @Autowired
+    private PersonService service;
 
     private static Person personTest;
 
@@ -63,11 +50,12 @@ class PersonServiceTest {
         medicalRecord.setBirthdate(birthday);
         personTest.setMedicalRecord(medicalRecord);
     }
+
     @Test
     void addNewPersonTest() {
 
-        List<Person> personList = service.addNewPerson(personTest);
-        assertThat(personList).contains(personTest);
+        Person person = service.addNewPerson(personTest);
+        assertThat(person).isEqualTo(personTest);
     }
 
     @Test
@@ -106,7 +94,7 @@ class PersonServiceTest {
 
         service.deletePerson("Sophia", "Zemicks");
 
-        assertThat(personList).isNotEmpty().doesNotContain(personToDelete);
+        assertThat(service.getAllPersons()).isNotEmpty().doesNotContain(personToDelete);
 
     }
 
@@ -126,8 +114,8 @@ class PersonServiceTest {
         personPerFirestationDtoTest.setCity("Culver");
         personPerFirestationDtoTest.setZip("97451");
         personPerFirestationDtoTest.setPhone("841-874-6512");
-        personPerFirestationDtoTest.setNumberOfAdults(3);
-        personPerFirestationDtoTest.setNumberOfChildren(3);
+        personPerFirestationDtoTest.setNumberOfAdults(0);
+        personPerFirestationDtoTest.setNumberOfChildren(1);
 
         List<PersonPerFirestationDto> personPerFirestationDTO = service.getPersonPerFirestation("3");
 
@@ -156,7 +144,7 @@ class PersonServiceTest {
     @Test
     void getPhoneNumbersPerFirestationTest() {
 
-        Person personInfo = personList.get(22);
+        Person personInfo = service.getAllPersons().get(21);
         String phoneNumber = personInfo.getPhone();
 
         List<String> getPhoneNumbersPerFirestation = service.getPhoneNumbersPerFirestation("2");

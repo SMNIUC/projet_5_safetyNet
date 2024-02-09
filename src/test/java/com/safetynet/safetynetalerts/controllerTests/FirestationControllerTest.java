@@ -120,11 +120,11 @@ class FirestationControllerTest {
     @Test
     void getFloodAlert() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/flood/stations")
-                        .param("stationsList", "3,4")
+                        .param("stationsList", "2,4")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$", hasSize(7)));
+                .andExpect(jsonPath("$", hasSize(5)));
     }
 }
