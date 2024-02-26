@@ -1,4 +1,4 @@
-package com.safetynet.safetynetalerts.model.Dtos;
+package com.safetynet.safetynetalerts.model.dto;
 
 import lombok.Data;
 import org.springframework.stereotype.Component;

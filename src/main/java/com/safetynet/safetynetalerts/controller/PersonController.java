@@ -1,8 +1,8 @@
 package com.safetynet.safetynetalerts.controller;
 
-import com.safetynet.safetynetalerts.model.Dtos.ChildrenPerHouseholdDto;
+import com.safetynet.safetynetalerts.model.dto.ChildrenPerHouseholdDto;
 import com.safetynet.safetynetalerts.model.Person;
-import com.safetynet.safetynetalerts.model.Dtos.PersonInfoDto;
+import com.safetynet.safetynetalerts.model.dto.PersonInfoDto;
 import com.safetynet.safetynetalerts.service.PersonService;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;

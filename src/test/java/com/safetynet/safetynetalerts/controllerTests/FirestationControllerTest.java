@@ -79,6 +79,22 @@ class FirestationControllerTest {
                 .andExpect(jsonPath("$.station").value("1"));
     }
 
+    //Test for Firestation PUT ResourceNotFoundException error
+    @Test
+    void updateFirestationInfoResourceNotFoundException() throws Exception {
+        Firestation firestation = new Firestation();
+        firestation.setStation("1");
+        firestation.setAddress("644 Gershwin Cir");
+        String requestJson = JsonStream.serialize(firestation);
+
+        mvc.perform(MockMvcRequestBuilders
+                        .put("/firestation")
+                        .param("address", "596 Best St")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().is(404));
+    }
+
     //Test for Firestation DELETE
     @Test
     void deleteFirestation() throws Exception {

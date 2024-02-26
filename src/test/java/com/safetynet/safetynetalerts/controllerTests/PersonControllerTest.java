@@ -106,6 +106,18 @@ class PersonControllerTest {
                 .andExpect(jsonPath("$.city").value("NYC"));
     }
 
+    //Test for Person PUT ResourceNotFoundException error
+    @Test
+    void updatePersonInfoResourceNotFoundException() throws Exception {
+        String requestJson = JsonStream.serialize(person);
+        mvc.perform(MockMvcRequestBuilders.put("/person")
+                        .param("firstName", "Tom")
+                        .param("lastName", "Hawk")
+                        .contentType(APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().is(404));
+    }
+
     //Test for Person DELETE
     @Test
     void deletePerson() throws Exception {

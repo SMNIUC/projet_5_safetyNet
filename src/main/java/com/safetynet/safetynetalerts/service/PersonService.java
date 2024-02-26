@@ -1,6 +1,6 @@
 package com.safetynet.safetynetalerts.service;
 
-import com.safetynet.safetynetalerts.model.Dtos.*;
+import com.safetynet.safetynetalerts.model.dto.*;
 import com.safetynet.safetynetalerts.model.*;
 import com.safetynet.safetynetalerts.utils.JsonReaderUtil;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +55,7 @@ public class PersonService
 
         Person personToUpdate = jsonReaderUtil.getPersonByName( firstName, lastName );
 
-        if ( personToUpdate.getFirstName( ) != null && personToUpdate.getLastName( ) != null )
+        if ( personToUpdate != null )
         {
 
             String address = person.getAddress( );

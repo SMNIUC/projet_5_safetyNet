@@ -1,4 +1,4 @@
-package com.safetynet.safetynetalerts.model.Dtos;
+package com.safetynet.safetynetalerts.model.dto;
 
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -7,14 +7,13 @@ import java.util.List;
 
 @Data
 @Component
-public class PersonInfoDto {
+public class PersonForFloodAlertDto {
 
     private String firstName;
     private String lastName;
-    private String address;
+    private String phoneNumber;
     private int age;
-    private String email;
-    private List<String> medication;
+    private List<String> medicines;
     private List<String> allergies;
 
 }

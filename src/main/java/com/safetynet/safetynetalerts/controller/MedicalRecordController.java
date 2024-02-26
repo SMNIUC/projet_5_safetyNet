@@ -19,6 +19,7 @@ public class MedicalRecordController {
 
     private static final Logger log = LogManager.getLogger();
 
+
     /**
      *  Returns the list of all the Medical Record information available
      *
@@ -40,6 +41,7 @@ public class MedicalRecordController {
     public MedicalRecord addNewMedicalRecord(@RequestBody MedicalRecord newMedicalRecord) {
         return medicalRecordService.addNewMedicalRecord(newMedicalRecord);
     }
+
 
     /**
      * Updates a Medical Record object

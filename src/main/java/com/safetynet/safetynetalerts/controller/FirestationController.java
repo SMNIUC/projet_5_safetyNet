@@ -1,8 +1,8 @@
 package com.safetynet.safetynetalerts.controller;
 
 import com.safetynet.safetynetalerts.model.*;
-import com.safetynet.safetynetalerts.model.Dtos.PersonForFireAlertDto;
-import com.safetynet.safetynetalerts.model.Dtos.PersonPerFirestationDto;
+import com.safetynet.safetynetalerts.model.dto.PersonForFireAlertDto;
+import com.safetynet.safetynetalerts.model.dto.PersonPerFirestationDto;
 import com.safetynet.safetynetalerts.service.FirestationService;
 import com.safetynet.safetynetalerts.service.PersonService;
 import lombok.RequiredArgsConstructor;

@@ -49,7 +49,7 @@ public class FirestationService
         log.debug( "updateFirestationInfo()" );
         Firestation firestationToUpdate = jsonReaderUtil.getFirestationByAddress( address );
 
-        if ( firestationToUpdate.getAddress( ) != null )
+        if ( firestationToUpdate != null )
         {
 
             String station = firestation.getStation( );

@@ -56,7 +56,7 @@ class MedicalRecordControllerTest {
                 .andExpect(jsonPath("$.firstName").value("Mark"));
     }
 
-//    //Test for MedicalRecord PUT
+    //Test for MedicalRecord PUT
     @Test
     void updateMedicalRecord() throws Exception {
 
@@ -73,6 +73,23 @@ class MedicalRecordControllerTest {
                         .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.medications").value("xilliathal"));
+    }
+
+    //Test for MedicalRecord PUT ResourceNotFoundException error
+    @Test
+    void updateMedicalRecordInfoResourceNotFoundException() throws Exception {
+        List<String> meds = List.of("xilliathal");
+        MedicalRecord medicalRecord = new MedicalRecord();
+        medicalRecord.setMedications(meds);
+        String requestJson = JsonStream.serialize(medicalRecord);
+
+        mvc.perform(MockMvcRequestBuilders
+                        .put("/medicalRecord")
+                        .param("firstName", "Mark")
+                        .param("lastName", "Doe")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().is(404));
     }
 
     //Test for MedicalRecord DELETE

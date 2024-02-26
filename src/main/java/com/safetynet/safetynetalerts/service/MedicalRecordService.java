@@ -51,7 +51,7 @@ public class MedicalRecordService
         log.debug( "updateMedicalRecord()" );
         MedicalRecord medicalRecordToUpdate = jsonReaderUtil.getMedicalRecordByName( firstName, lastName );
 
-        if ( medicalRecordToUpdate.getFirstName( ) != null && medicalRecordToUpdate.getLastName( ) != null )
+        if ( medicalRecordToUpdate != null )
         {
 
             LocalDate birthdate = medicalRecord.getBirthdate( );
